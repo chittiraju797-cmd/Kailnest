@@ -161,9 +161,28 @@ function LoginScreen({ onLogin }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "system-ui, sans-serif" }}>
       {/* Logo */}
       <div style={{ marginBottom: 32, textAlign: "center" }}>
-        <div style={{ fontSize: 52, marginBottom: 8 }}>🏠</div>
-        <div style={{ color: "#fff", fontSize: 32, fontWeight: 900, letterSpacing: 2 }}>KAILNEST</div>
-        <div style={{ color: "#c7d2fe", fontSize: 12, marginTop: 4 }}>PG · Hotels · Apartments · Houses</div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100" height="100" style={{filter:"drop-shadow(0 4px 16px rgba(0,0,0,0.3))"}}>
+          <rect x="4" y="4" width="192" height="192" rx="36" ry="36" fill="white" stroke="#C9A84C" stroke-width="5"/>
+          <rect x="54" y="36" width="16" height="98" rx="4" fill="url(#g1)"/>
+          <polygon points="70,36 108,78 92,78 58,42" fill="#1B2A5E"/>
+          <polygon points="70,88 108,136 92,138 58,100" fill="#1B2A5E"/>
+          <polyline points="62,120 84,102 106,120" fill="none" stroke="#C9A84C" stroke-width="4" stroke-linejoin="round"/>
+          <rect x="76" y="110" width="5" height="5" rx="1" fill="#C9A84C"/>
+          <rect x="83" y="110" width="5" height="5" rx="1" fill="#C9A84C"/>
+          <rect x="76" y="117" width="5" height="5" rx="1" fill="#C9A84C"/>
+          <rect x="83" y="117" width="5" height="5" rx="1" fill="#C9A84C"/>
+          <text x="100" y="158" font-family="Georgia,serif" font-size="22" font-weight="bold" fill="#1B2A5E" text-anchor="middle" letter-spacing="3">KAILNEST</text>
+          <line x1="30" y1="170" x2="72" y2="170" stroke="#C9A84C" stroke-width="1"/>
+          <polygon points="100,167 103,170 100,173 97,170" fill="#C9A84C"/>
+          <line x1="128" y1="170" x2="170" y2="170" stroke="#C9A84C" stroke-width="1"/>
+          <defs>
+            <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style={{stopColor:"#F0C040",stopOpacity:1}}/>
+              <stop offset="100%" style={{stopColor:"#A07830",stopOpacity:1}}/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div style={{ color: "#c7d2fe", fontSize: 12, marginTop: 8 }}>PG · Hotels · Apartments · Houses</div>
       </div>
 
       <div style={{ background: "#fff", borderRadius: 20, padding: 24, width: "100%", maxWidth: 380, boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
