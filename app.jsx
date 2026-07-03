@@ -133,13 +133,20 @@ const LOGO_URL = "https://i.imgur.com/placeholder.png"; // Replace with real log
 
 // ─── Login / Signup Screen ─────────────────────────────────────────────────────
 function LoginScreen({ onLogin }) {
-  const [mode, setMode] = useState("login"); // login | signup
-  const [role, setRole] = useState("tenant"); // tenant | owner
+  const [mode, setMode] = useState("login");
+  const [role, setRole] = useState("tenant");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [name, setName] = useState("");
-  const [step, setStep] = useState(1); // 1=details, 2=otp, 3=done
+  const [upiId, setUpiId] = useState("");
+  const [qrPreview, setQrPreview] = useState(null);
+  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  const handleQRUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) setQrPreview(URL.createObjectURL(file));
+  };
 
   const sendOTP = () => {
     if (phone.length !== 10) return;
@@ -153,7 +160,7 @@ function LoginScreen({ onLogin }) {
     setTimeout(() => {
       setLoading(false);
       setStep(3);
-      setTimeout(() => onLogin({ name: name || "User", phone, role }), 1000);
+      setTimeout(() => onLogin({ name: name || "User", phone, role, upiId, qrPreview }), 1000);
     }, 1000);
   };
 
@@ -161,28 +168,9 @@ function LoginScreen({ onLogin }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "system-ui, sans-serif" }}>
       {/* Logo */}
       <div style={{ marginBottom: 32, textAlign: "center" }}>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100" height="100" style={{filter:"drop-shadow(0 4px 16px rgba(0,0,0,0.3))"}}>
-          <rect x="4" y="4" width="192" height="192" rx="36" ry="36" fill="white" stroke="#C9A84C" stroke-width="5"/>
-          <rect x="54" y="36" width="16" height="98" rx="4" fill="url(#g1)"/>
-          <polygon points="70,36 108,78 92,78 58,42" fill="#1B2A5E"/>
-          <polygon points="70,88 108,136 92,138 58,100" fill="#1B2A5E"/>
-          <polyline points="62,120 84,102 106,120" fill="none" stroke="#C9A84C" stroke-width="4" stroke-linejoin="round"/>
-          <rect x="76" y="110" width="5" height="5" rx="1" fill="#C9A84C"/>
-          <rect x="83" y="110" width="5" height="5" rx="1" fill="#C9A84C"/>
-          <rect x="76" y="117" width="5" height="5" rx="1" fill="#C9A84C"/>
-          <rect x="83" y="117" width="5" height="5" rx="1" fill="#C9A84C"/>
-          <text x="100" y="158" font-family="Georgia,serif" font-size="22" font-weight="bold" fill="#1B2A5E" text-anchor="middle" letter-spacing="3">KAILNEST</text>
-          <line x1="30" y1="170" x2="72" y2="170" stroke="#C9A84C" stroke-width="1"/>
-          <polygon points="100,167 103,170 100,173 97,170" fill="#C9A84C"/>
-          <line x1="128" y1="170" x2="170" y2="170" stroke="#C9A84C" stroke-width="1"/>
-          <defs>
-            <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{stopColor:"#F0C040",stopOpacity:1}}/>
-              <stop offset="100%" style={{stopColor:"#A07830",stopOpacity:1}}/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <div style={{ color: "#c7d2fe", fontSize: 12, marginTop: 8 }}>PG · Hotels · Apartments · Houses</div>
+        <div style={{ fontSize: 52, marginBottom: 8 }}>🏠</div>
+        <div style={{ color: "#fff", fontSize: 32, fontWeight: 900, letterSpacing: 2 }}>KAILNEST</div>
+        <div style={{ color: "#c7d2fe", fontSize: 12, marginTop: 4 }}>PG · Hotels · Apartments · Houses</div>
       </div>
 
       <div style={{ background: "#fff", borderRadius: 20, padding: 24, width: "100%", maxWidth: 380, boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
@@ -242,6 +230,51 @@ function LoginScreen({ onLogin }) {
                       style={{ flex: 1, padding: "11px 12px", borderRadius: 10, border: "1.5px solid #e5e7eb", fontSize: 14, boxSizing: "border-box" }} />
                   </div>
                 </div>
+
+                {/* Owner UPI/QR Section */}
+                {mode === "signup" && role === "owner" && (
+                  <div style={{ background: "#f0fdf4", borderRadius: 14, padding: 14, marginBottom: 16, border: "1.5px solid #bbf7d0" }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: "#166534", marginBottom: 4 }}>💳 Payment Details (Optional)</div>
+                    <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 12 }}>Tenants మీకు directly pay చేయడానికి UPI ID లేదా QR code add చేయండి</div>
+
+                    {/* UPI ID */}
+                    <div style={{ marginBottom: 12 }}>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: "#374151", display: "block", marginBottom: 6 }}>📱 UPI ID</label>
+                      <input value={upiId} onChange={e => setUpiId(e.target.value)}
+                        placeholder="yourname@upi లేదా yourname@paytm"
+                        style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e5e7eb", fontSize: 13, boxSizing: "border-box" }} />
+                      <div style={{ fontSize: 11, color: "#6b7280", marginTop: 4 }}>GPay / PhonePe / Paytm / BHIM UPI ID</div>
+                    </div>
+
+                    {/* QR Code Upload */}
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: "#374151", display: "block", marginBottom: 6 }}>📷 QR Code Upload (optional)</label>
+                      {qrPreview ? (
+                        <div style={{ position: "relative", display: "inline-block" }}>
+                          <img src={qrPreview} alt="QR" style={{ width: 100, height: 100, borderRadius: 10, border: "2px solid #16a34a", objectFit: "cover" }} />
+                          <button onClick={() => setQrPreview(null)} style={{
+                            position: "absolute", top: -6, right: -6, background: "#ef4444", color: "#fff",
+                            border: "none", borderRadius: "50%", width: 20, height: 20, fontSize: 11, cursor: "pointer"
+                          }}>✕</button>
+                          <div style={{ fontSize: 11, color: "#16a34a", marginTop: 4, fontWeight: 600 }}>✅ QR uploaded</div>
+                        </div>
+                      ) : (
+                        <label style={{
+                          display: "flex", alignItems: "center", gap: 8, padding: "10px 14px",
+                          background: "#fff", border: "2px dashed #86efac", borderRadius: 10,
+                          cursor: "pointer", fontSize: 13, color: "#166534", fontWeight: 600
+                        }}>
+                          📷 GPay/PhonePe QR upload చేయి
+                          <input type="file" accept="image/*" onChange={handleQRUpload} style={{ display: "none" }} />
+                        </label>
+                      )}
+                    </div>
+
+                    <div style={{ marginTop: 10, background: "#dcfce7", borderRadius: 8, padding: "8px 10px", fontSize: 11, color: "#166534" }}>
+                      💡 Tenants మీ UPI ID కి directly pay చేయవచ్చు — platform fee మాత్రమే Kailnest కి వెళ్తుంది
+                    </div>
+                  </div>
+                )}
 
                 <button onClick={sendOTP} disabled={phone.length !== 10 || loading} style={{
                   width: "100%", padding: "13px",
@@ -734,7 +767,7 @@ function PGDetail({ pg, onBack, onBook }) {
   );
 }
 
-function BookingModal({ pg, onClose, onPay }) {
+function BookingModal({ pg, onClose, onPay, ownerUpi, ownerQr }) {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({ name: "", phone: "", moveIn: "", roomType: "Single" });
   const [payMethod, setPayMethod] = useState("UPI / GPay / PhonePe");
@@ -833,6 +866,35 @@ function BookingModal({ pg, onClose, onPay }) {
               <span>₹{(pg.price + pg.deposit + 199).toLocaleString()}</span>
             </div>
             <div style={{ background: "#f0f0ff", borderRadius: 12, padding: 12, marginBottom: 16 }}>
+              {/* Owner UPI Direct Payment */}
+              {(ownerUpi || ownerQr) && payMethod === "UPI / GPay / PhonePe" && (
+                <div style={{ background: "#f0fdf4", borderRadius: 12, padding: 12, marginBottom: 12, border: "1.5px solid #bbf7d0" }}>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: "#166534", marginBottom: 8 }}>💳 Owner UPI Details</div>
+                  {ownerUpi && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                      <span style={{ fontSize: 20 }}>📱</span>
+                      <div>
+                        <div style={{ fontSize: 12, color: "#6b7280" }}>UPI ID</div>
+                        <div style={{ fontWeight: 700, fontSize: 14, color: "#111" }}>{ownerUpi}</div>
+                      </div>
+                      <button onClick={() => navigator.clipboard?.writeText(ownerUpi)} style={{
+                        marginLeft: "auto", background: "#dcfce7", border: "none", borderRadius: 8,
+                        padding: "4px 10px", fontSize: 11, color: "#166534", fontWeight: 700, cursor: "pointer"
+                      }}>Copy</button>
+                    </div>
+                  )}
+                  {ownerQr && (
+                    <div style={{ textAlign: "center" }}>
+                      <img src={ownerQr} alt="QR" style={{ width: 120, height: 120, borderRadius: 10, border: "2px solid #16a34a" }} />
+                      <div style={{ fontSize: 11, color: "#166534", marginTop: 4 }}>GPay/PhonePe తో scan చేయి</div>
+                    </div>
+                  )}
+                  <div style={{ fontSize: 11, color: "#6b7280", marginTop: 8 }}>
+                    ⚠️ Rent + Deposit owner కి directly pay చేయి. Platform fee ₹199 మాత్రమే Kailnest కి.
+                  </div>
+                </div>
+              )}
+
               <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 13 }}>Pay via</div>
               {["UPI / GPay / PhonePe", "Net Banking", "Credit / Debit Card", "Cash (Pay to Owner)"].map(method => (
                 <div key={method} onClick={() => setPayMethod(method)} style={{
@@ -2142,10 +2204,39 @@ export default function PGFinderApp() {
                 background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: 28, color: "#fff", fontWeight: 800
-              }}>R</div>
-              <div style={{ fontWeight: 800, fontSize: 16 }}>Rauu</div>
-              <div style={{ color: "#6b7280", fontSize: 13 }}>Porumamilla, Kadapa</div>
+              }}>{user?.name?.[0]?.toUpperCase() || "U"}</div>
+              <div style={{ fontWeight: 800, fontSize: 16 }}>{user?.name}</div>
+              <div style={{ color: "#6b7280", fontSize: 13 }}>📞 +91 {user?.phone}</div>
+              <div style={{
+                display: "inline-block", marginTop: 6, background: user?.role === "owner" ? "#fef3c7" : "#eff6ff",
+                color: user?.role === "owner" ? "#92400e" : "#1d4ed8",
+                borderRadius: 20, padding: "3px 12px", fontSize: 12, fontWeight: 700
+              }}>{user?.role === "owner" ? "🏠 Owner" : "🏃 Tenant"}</div>
             </div>
+
+            {/* Owner UPI card */}
+            {user?.role === "owner" && (
+              <div style={{ background: "#fff", borderRadius: 14, padding: 16, marginBottom: 16, border: "1.5px solid #bbf7d0" }}>
+                <div style={{ fontWeight: 700, fontSize: 14, color: "#166534", marginBottom: 10 }}>💳 Payment Details</div>
+                {user?.upiId ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 24 }}>📱</span>
+                    <div>
+                      <div style={{ fontSize: 11, color: "#6b7280" }}>UPI ID</div>
+                      <div style={{ fontWeight: 700, fontSize: 14 }}>{user.upiId}</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 13, color: "#9ca3af" }}>UPI ID add చేయలేదు — logout చేసి signup లో add చేయండి</div>
+                )}
+                {user?.qrPreview && (
+                  <div style={{ marginTop: 10, textAlign: "center" }}>
+                    <img src={user.qrPreview} alt="QR" style={{ width: 100, height: 100, borderRadius: 10, border: "2px solid #16a34a" }} />
+                    <div style={{ fontSize: 11, color: "#16a34a", marginTop: 4 }}>✅ QR Code uploaded</div>
+                  </div>
+                )}
+              </div>
+            )}
             {[
               { icon: "📋", label: "My Bookings" },
               { icon: "❤️", label: "Saved PGs" },
@@ -2226,6 +2317,8 @@ export default function PGFinderApp() {
       {/* Modals */}
       {bookingPG && (
         <BookingModal pg={bookingPG} onClose={() => setBookingPG(null)}
+          ownerUpi={bookingPG?.ownerUpi || ""}
+          ownerQr={bookingPG?.ownerQr || null}
           onPay={({ payMethod, cashPaid }) => {
             const newBooking = {
               ...bookingPG,
@@ -2295,7 +2388,6 @@ export default function PGFinderApp() {
   );
 }
 
-// Mount app
 const container = document.getElementById('root');
 const reactRoot = ReactDOM.createRoot(container);
 reactRoot.render(React.createElement(PGFinderApp));
