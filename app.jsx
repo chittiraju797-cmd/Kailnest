@@ -194,7 +194,7 @@ const FB = {
   }
 };
 
-const LOGO_URL = "https://i.imgur.com/placeholder.png"; // Replace with real logo URL after GitHub upload
+const LOGO_URL = "https://raw.githubusercontent.com/chittiraju797-cmd/Kailnest/main/1782926117778.png";
 
 // ─── Login / Signup Screen ─────────────────────────────────────────────────────
 function LoginScreen({ onLogin }) {
@@ -233,9 +233,8 @@ function LoginScreen({ onLogin }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "system-ui, sans-serif" }}>
       {/* Logo */}
       <div style={{ marginBottom: 32, textAlign: "center" }}>
-        <div style={{ fontSize: 52, marginBottom: 8 }}>🏠</div>
-        <div style={{ color: "#fff", fontSize: 32, fontWeight: 900, letterSpacing: 2 }}>KAILNEST</div>
-        <div style={{ color: "#c7d2fe", fontSize: 12, marginTop: 4 }}>PG · Hotels · Apartments · Houses</div>
+        <img src={LOGO_URL} alt="Kailnest" style={{ width: 140, height: 140, objectFit: "contain", filter: "drop-shadow(0 4px 20px rgba(0,0,0,0.4))" }} />
+        <div style={{ color: "#c7d2fe", fontSize: 12, marginTop: 6 }}>PG · Hotels · Apartments · Houses</div>
       </div>
 
       <div style={{ background: "#fff", borderRadius: 20, padding: 24, width: "100%", maxWidth: 380, boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
@@ -1942,9 +1941,12 @@ export default function PGFinderApp() {
         padding: "48px 16px 20px", color: "#fff"
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.5, color: "#fff" }}>🏠 Kailnest</div>
-            <div style={{ fontSize: 11, opacity: 0.8, marginTop: 1 }}>PG · Hotels · Apartments · Houses</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <img src={LOGO_URL} alt="Kailnest" style={{ width: 36, height: 36, objectFit: "contain" }} />
+            <div>
+              <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: -0.5, color: "#fff" }}>Kailnest</div>
+              <div style={{ fontSize: 10, opacity: 0.8 }}>PG · Hotels · Apartments · Houses</div>
+            </div>
           </div>
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: 12, color: "#c7d2fe" }}>👤 {user?.name}</div>
