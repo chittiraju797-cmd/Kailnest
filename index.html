@@ -34,6 +34,28 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAC8ZgnSvJEAsEgrGPOSA-Ih9UqNFIOPog",
+      authDomain: "kailnest-app.firebaseapp.com",
+      projectId: "kailnest-app",
+      storageBucket: "kailnest-app.firebasestorage.app",
+      messagingSenderId: "845274786181",
+      appId: "1:845274786181:web:e47a6e96ea6e17ba35fcec",
+      measurementId: "G-PMR1DKH7C6"
+    };
+    firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
+    window.auth = firebase.auth();
+    console.log("Firebase initialized ✅");
+  </script>
+
   <script type="text/babel" src="app.jsx" data-type="module"></script>
 
   <script>
