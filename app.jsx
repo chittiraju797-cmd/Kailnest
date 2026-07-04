@@ -129,6 +129,71 @@ function Badge({ text, color = "#e0f2fe", textColor = "#0369a1" }) {
 }
 
 // ─── Logo URL (Kailnest official logo) ────────────────────────────────────────
+// ─── Firebase Configuration ───────────────────────────────────────────────────
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAC8ZgnSvJEAsEgrGPOSA-Ih9UqNFIOPog",
+  authDomain: "kailnest-app.firebaseapp.com",
+  projectId: "kailnest-app",
+  storageBucket: "kailnest-app.firebasestorage.app",
+  messagingSenderId: "845274786181",
+  appId: "1:845274786181:web:e47a6e96ea6e17ba35fcec",
+  measurementId: "G-PMR1DKH7C6"
+};
+
+// Firebase helper functions (loaded via CDN in index.html)
+// Real Firebase operations happen here
+const FB = {
+  // Save booking to Firestore
+  async saveBooking(booking) {
+    try {
+      if (!window.db) return null;
+      const ref = await window.db.collection("bookings").add({
+        ...booking,
+        createdAt: new Date().toISOString(),
+        status: "confirmed"
+      });
+      return ref.id;
+    } catch (e) { console.log("Firebase save error:", e); return null; }
+  },
+
+  // Save complaint to Firestore
+  async saveComplaint(complaint) {
+    try {
+      if (!window.db) return null;
+      const ref = await window.db.collection("complaints").add({
+        ...complaint,
+        createdAt: new Date().toISOString()
+      });
+      return ref.id;
+    } catch (e) { console.log("Firebase complaint error:", e); return null; }
+  },
+
+  // Save PG listing (owner)
+  async saveListing(listing) {
+    try {
+      if (!window.db) return null;
+      const ref = await window.db.collection("listings").add({
+        ...listing,
+        createdAt: new Date().toISOString(),
+        verified: false,
+        featured: false
+      });
+      return ref.id;
+    } catch (e) { console.log("Firebase listing error:", e); return null; }
+  },
+
+  // Get listings from Firestore
+  async getListings(category) {
+    try {
+      if (!window.db) return [];
+      const snap = await window.db.collection("listings")
+        .where("category", "==", category)
+        .get();
+      return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) { return []; }
+  }
+};
+
 const LOGO_URL = "https://i.imgur.com/placeholder.png"; // Replace with real logo URL after GitHub upload
 
 // ─── Login / Signup Screen ─────────────────────────────────────────────────────
