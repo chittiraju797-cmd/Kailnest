@@ -489,7 +489,7 @@ function MediaGallery({ pg, startIndex = 0, onClose }) {
   );
 }
 
-function PGCard({ pg, onView, onBook }) {
+function PGCard({ pg, onView, onBook, isWishlisted, onWishlist }) {
   const availColor = pg.available === 0 ? "#fef2f2" : pg.available <= 2 ? "#fffbeb" : "#f0fdf4";
   const availText = pg.available === 0 ? "#dc2626" : pg.available <= 2 ? "#d97706" : "#16a34a";
 
@@ -516,17 +516,24 @@ function PGCard({ pg, onView, onBook }) {
         {pg.featured && (
           <div style={{
             position: "absolute", top: 10, left: 10,
-            background: "#f59e0b", color: "#fff", borderRadius: 20,
+            background: "linear-gradient(135deg, #f59e0b, #ef4444)", color: "#fff", borderRadius: 20,
             padding: "2px 10px", fontSize: 11, fontWeight: 700
-          }}>⭐ Featured</div>
+          }}>📢 Ad</div>
         )}
         {pg.verified && (
           <div style={{
-            position: "absolute", top: 10, right: 10,
+            position: "absolute", top: 10, right: 40,
             background: "#10b981", color: "#fff", borderRadius: 20,
             padding: "2px 10px", fontSize: 11, fontWeight: 700
           }}>✓ Verified</div>
         )}
+        {/* Wishlist Heart Button */}
+        <button onClick={(e) => { e.stopPropagation(); onWishlist && onWishlist(pg.id); }} style={{
+          position: "absolute", top: 8, right: 8, background: "rgba(255,255,255,0.9)",
+          border: "none", borderRadius: "50%", width: 30, height: 30,
+          fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.2)"
+        }}>{isWishlisted ? "❤️" : "🤍"}</button>
         <div style={{
           position: "absolute", bottom: 10, right: 10,
           background: availColor, color: availText, borderRadius: 20,
@@ -1794,7 +1801,14 @@ export default function PGFinderApp() {
   const [showTerms, setShowTerms] = useState(null); // "terms" | "privacy" | null
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("All");
+  const [filterGender, setFilterGender] = useState("All"); // for Houses/Apartments
+  const [filterAC, setFilterAC] = useState("All"); // All/AC/Non-AC
+  const [filterFurnished, setFilterFurnished] = useState("All"); // All/Furnished/Unfurnished
+  const [wishlist, setWishlist] = useState([]); // listing ids saved
+  const [showWishlist, setShowWishlist] = useState(false);
   const [maxPrice, setMaxPrice] = useState(50000);
+
+  const toggleWishlist = (id) => setWishlist(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   const [selectedPG, setSelectedPG] = useState(null);
   const [bookingPG, setBookingPG] = useState(null);
   const [showSubscription, setShowSubscription] = useState(false);
@@ -1829,10 +1843,19 @@ export default function PGFinderApp() {
       pg.location.toLowerCase().includes(search.toLowerCase()) ||
       pg.nearBy.toLowerCase().includes(search.toLowerCase());
     const matchType = filterType === "All" || pg.type === filterType;
+    const matchGender = filterGender === "All" || pg.type === filterGender;
+    const matchAC = filterAC === "All" ||
+      (filterAC === "AC" && pg.amenities?.includes("AC")) ||
+      (filterAC === "Non-AC" && !pg.amenities?.includes("AC"));
+    const matchFurnished = filterFurnished === "All" ||
+      (filterFurnished === "Furnished" && pg.amenities?.some(a => a.toLowerCase().includes("furnish"))) ||
+      (filterFurnished === "Unfurnished" && !pg.amenities?.some(a => a.toLowerCase().includes("furnish")));
     const matchPrice = pg.price <= maxPrice;
     const matchCity = selectedCity === "All India" || pg.location.toLowerCase().includes(selectedCity.toLowerCase());
-    return matchSearch && matchType && matchPrice && matchCity;
+    return matchSearch && matchType && matchGender && matchAC && matchFurnished && matchPrice && matchCity;
   });
+  // Featured listings (paid ads) first
+  const sortedFiltered = [...filtered].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
 
   // Show login screen if not logged in
   if (!user) return <LoginScreen onLogin={(u) => setUser(u)} />;
@@ -1953,7 +1976,7 @@ export default function PGFinderApp() {
                 {/* Featured across all categories */}
                 <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 12 }}>⭐ Featured Listings</div>
                 {[...PGS, ...HOTELS, ...APARTMENTS, ...HOUSES].filter(l => l.featured).map(l => (
-                  <PGCard key={l.id} pg={l} onView={setSelectedPG} onBook={setBookingPG} />
+                  <PGCard key={l.id} pg={l} onView={setSelectedPG} onBook={setBookingPG} isWishlisted={wishlist.includes(l.id)} onWishlist={toggleWishlist} isWishlisted={wishlist.includes(pg.id)} onWishlist={toggleWishlist} />
                 ))}
               </>
             ) : (
@@ -1969,9 +1992,36 @@ export default function PGFinderApp() {
                   </div>
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <div style={{ fontSize: 14, color: "#6b7280" }}>{filtered.length} listings found</div>
-                  <div style={{ fontSize: 12, color: "#6366f1", fontWeight: 600 }}>Sort: Price ↑</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                  <div style={{ fontSize: 14, color: "#6b7280" }}>{sortedFiltered.length} listings found</div>
+                  <div style={{ fontSize: 12, color: "#6366f1", fontWeight: 600 }}>📢 Ads first</div>
+                </div>
+
+                {/* Filter chips */}
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
+                  {(activeCategory === "House" || activeCategory === "Apartment") &&
+                    ["All", "Boys", "Girls", "Co-ed"].map(g => (
+                      <button key={g} onClick={() => setFilterGender(g)} style={{
+                        background: filterGender === g ? "#6366f1" : "#f3f4f6",
+                        color: filterGender === g ? "#fff" : "#374151",
+                        border: "none", borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer"
+                      }}>{g === "Girls" ? "👩" : g === "Boys" ? "👨" : ""} {g}</button>
+                    ))
+                  }
+                  {["All", "AC ❄️", "Non-AC 🌀"].map(a => (
+                    <button key={a} onClick={() => setFilterAC(a.split(" ")[0])} style={{
+                      background: filterAC === a.split(" ")[0] ? "#0891b2" : "#f3f4f6",
+                      color: filterAC === a.split(" ")[0] ? "#fff" : "#374151",
+                      border: "none", borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer"
+                    }}>{a}</button>
+                  ))}
+                  {["All", "Furnished 🛋️", "Unfurnished"].map(f => (
+                    <button key={f} onClick={() => setFilterFurnished(f.split(" ")[0])} style={{
+                      background: filterFurnished === f.split(" ")[0] ? "#059669" : "#f3f4f6",
+                      color: filterFurnished === f.split(" ")[0] ? "#fff" : "#374151",
+                      border: "none", borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer"
+                    }}>{f}</button>
+                  ))}
                 </div>
 
                 {filtered.length === 0 ? (
@@ -1981,8 +2031,8 @@ export default function PGFinderApp() {
                     <div style={{ fontSize: 13, marginTop: 4 }}>Try different filters</div>
                   </div>
                 ) : (
-                  filtered.map(pg => (
-                    <PGCard key={pg.id} pg={pg} onView={setSelectedPG} onBook={setBookingPG} />
+                  sortedFiltered.map(pg => (
+                    <PGCard key={pg.id} pg={pg} onView={setSelectedPG} onBook={setBookingPG} isWishlisted={wishlist.includes(pg.id)} onWishlist={toggleWishlist} />
                   ))
                 )}
               </>
@@ -2096,6 +2146,33 @@ export default function PGFinderApp() {
                   </div>
                 );
               })
+            )}
+          </>
+        )}
+
+        {/* Wishlist Tab */}
+        {tab === "wishlist" && (
+          <>
+            <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 4 }}>❤️ Saved Listings</div>
+            <div style={{ fontSize: 13, color: "#6b7280", marginBottom: 16 }}>{wishlist.length} saved</div>
+            {wishlist.length === 0 ? (
+              <div style={{ textAlign: "center", padding: 40, color: "#9ca3af" }}>
+                <div style={{ fontSize: 48 }}>🤍</div>
+                <div style={{ fontSize: 16, fontWeight: 600, marginTop: 8 }}>No saved listings yet</div>
+                <div style={{ fontSize: 13, marginTop: 4 }}>PG/Hotel card మీద ❤️ నొక్కి save చేయి</div>
+                <button onClick={() => setTab("search")} style={{
+                  marginTop: 14, background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                  color: "#fff", border: "none", borderRadius: 12, padding: "10px 24px",
+                  fontSize: 14, fontWeight: 700, cursor: "pointer"
+                }}>Browse Listings</button>
+              </div>
+            ) : (
+              [...PGS, ...EXTRA_PGS, ...HOTELS, ...EXTRA_HOTELS, ...APARTMENTS, ...EXTRA_APARTMENTS, ...HOUSES, ...EXTRA_HOUSES]
+                .filter(pg => wishlist.includes(pg.id))
+                .map(pg => (
+                  <PGCard key={pg.id} pg={pg} onView={setSelectedPG} onBook={setBookingPG}
+                    isWishlisted={true} onWishlist={toggleWishlist} />
+                ))
             )}
           </>
         )}
@@ -2287,6 +2364,7 @@ export default function PGFinderApp() {
         {[
           { id: "search", icon: "🔍", label: "Search" },
           { id: "bookings", icon: "📋", label: "Bookings" },
+          { id: "wishlist", icon: "❤️", label: "Saved", badge: wishlist.length },
           { id: "owner", icon: "🏠", label: "Owner", badge: ownerNotifications.filter(n => !n.read).length },
           { id: "profile", icon: "👤", label: "Profile" },
         ].map(t => (
