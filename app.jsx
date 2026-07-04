@@ -1208,8 +1208,8 @@ function VacationNoticeModal({ booking, onClose, onSubmit }) {
 }
 
 // ─── Customer Support Modal ───────────────────────────────────────────────────
-const SUPPORT_NUMBER = "9876500000"; // Replace with real support number when SIM ready
-const SUPPORT_WHATSAPP = "9876500000";
+const SUPPORT_NUMBER = "7842375842";
+const SUPPORT_WHATSAPP = "7842375842";
 const SUPPORT_EMAIL = "kailnest5@gmail.com";
 
 function CustomerSupportModal({ onClose }) {
