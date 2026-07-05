@@ -1047,9 +1047,23 @@ function OwnerSubscriptionModal({ onClose }) {
     { name: "Premium", price: 7999, period: "year", listings: 20, features: ["20 PG listings", "Top search placement", "Verified badge", "Dedicated support", "Owner dashboard"] },
   ];
 
-  const handlePay = (plan) => {
-    const upiUrl = `upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}+Plan&cu=INR`;
-    window.open(upiUrl, "_blank");
+  const [copied, setCopied] = useState("");
+
+  const copyUPI = (planName) => {
+    navigator.clipboard?.writeText(KAILNEST_UPI).then(() => {
+      setCopied(planName);
+      setTimeout(() => setCopied(""), 2000);
+    }).catch(() => {
+      // fallback
+      const el = document.createElement("textarea");
+      el.value = KAILNEST_UPI;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+      setCopied(planName);
+      setTimeout(() => setCopied(""), 2000);
+    });
   };
 
   return (
@@ -1085,23 +1099,55 @@ function OwnerSubscriptionModal({ onClose }) {
               ))}
             </div>
 
-            {/* UPI Payment buttons */}
-            <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-              <button onClick={() => window.open(`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}&cu=INR`, "_blank")} style={{
-                flex: 1, padding: "9px", background: "#5f259f", color: "#fff",
-                border: "none", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer"
-              }}>💜 PhonePe</button>
-              <button onClick={() => window.open(`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}&cu=INR`, "_blank")} style={{
-                flex: 1, padding: "9px", background: "#1a73e8", color: "#fff",
-                border: "none", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer"
-              }}>🔵 GPay</button>
-              <button onClick={() => window.open(`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}&cu=INR`, "_blank")} style={{
-                flex: 1, padding: "9px", background: "#00BAF2", color: "#fff",
-                border: "none", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer"
-              }}>💙 Paytm</button>
+            {/* Payment section */}
+            <div style={{ marginTop: 12, background: "#f9fafb", borderRadius: 12, padding: 12, border: "1px solid #e5e7eb" }}>
+              <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 10, color: "#111" }}>💳 Pay ₹{plan.price} via UPI</div>
+
+              {/* QR Code via Google Charts API */}
+              <div style={{ textAlign: "center", marginBottom: 10 }}>
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=${KAILNEST_UPI}%26pn=Kailnest%26am=${plan.price}%26tn=Kailnest+${plan.name}+Plan%26cu=INR`}
+                  alt="UPI QR"
+                  style={{ width: 130, height: 130, borderRadius: 10, border: "2px solid #e5e7eb" }}
+                />
+                <div style={{ fontSize: 11, color: "#6b7280", marginTop: 4 }}>📱 Phone తో scan చేయి</div>
+              </div>
+
+              {/* UPI ID copy */}
+              <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#fff", borderRadius: 10, padding: "8px 12px", border: "1px solid #e5e7eb" }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 10, color: "#9ca3af" }}>UPI ID</div>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: "#111" }}>{KAILNEST_UPI}</div>
+                </div>
+                <button onClick={() => copyUPI(plan.name)} style={{
+                  background: copied === plan.name ? "#16a34a" : "#6366f1",
+                  color: "#fff", border: "none", borderRadius: 8,
+                  padding: "6px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer"
+                }}>{copied === plan.name ? "✅ Copied!" : "📋 Copy"}</button>
+              </div>
+              <div style={{ fontSize: 11, color: "#6b7280", marginTop: 6, textAlign: "center" }}>
+                GPay / PhonePe / Paytm / BHIM లో UPI ID enter చేయి
+              </div>
+
+              {/* Mobile app buttons */}
+              <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+                <a href={`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}&cu=INR`} style={{
+                  flex: 1, textAlign: "center", padding: "8px", background: "#5f259f", color: "#fff",
+                  borderRadius: 8, fontSize: 11, fontWeight: 700, textDecoration: "none"
+                }}>💜 PhonePe</a>
+                <a href={`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}&cu=INR`} style={{
+                  flex: 1, textAlign: "center", padding: "8px", background: "#1a73e8", color: "#fff",
+                  borderRadius: 8, fontSize: 11, fontWeight: 700, textDecoration: "none"
+                }}>🔵 GPay</a>
+                <a href={`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}&cu=INR`} style={{
+                  flex: 1, textAlign: "center", padding: "8px", background: "#00BAF2", color: "#fff",
+                  borderRadius: 8, fontSize: 11, fontWeight: 700, textDecoration: "none"
+                }}>💙 Paytm</a>
+              </div>
             </div>
-            <div style={{ fontSize: 11, color: "#9ca3af", textAlign: "center", marginTop: 6 }}>
-              UPI ID: {KAILNEST_UPI}
+
+            <div style={{ fontSize: 11, color: "#9ca3af", textAlign: "center", marginTop: 8 }}>
+              Pay చేసిన తర్వాత screenshot పంపు: <strong>7842375842</strong> (WhatsApp)
             </div>
           </div>
         ))}
