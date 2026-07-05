@@ -1040,11 +1040,17 @@ function BookingModal({ pg, onClose, onPay, ownerUpi, ownerQr }) {
 }
 
 function OwnerSubscriptionModal({ onClose }) {
+  const KAILNEST_UPI = "7993315482-2@ybl";
   const plans = [
     { name: "Basic", price: 499, period: "month", listings: 1, features: ["1 PG listing", "Basic analytics", "Email support"] },
     { name: "Pro", price: 2999, period: "year", listings: 5, features: ["5 PG listings", "Priority listing", "Photo gallery", "Chat with tenants", "Detailed analytics"], popular: true },
     { name: "Premium", price: 7999, period: "year", listings: 20, features: ["20 PG listings", "Top search placement", "Verified badge", "Dedicated support", "Owner dashboard"] },
   ];
+
+  const handlePay = (plan) => {
+    const upiUrl = `upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}+Plan&cu=INR`;
+    window.open(upiUrl, "_blank");
+  };
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "flex-end", zIndex: 1000 }}>
@@ -1078,14 +1084,33 @@ function OwnerSubscriptionModal({ onClose }) {
                 <div key={f} style={{ fontSize: 12, color: "#374151", padding: "2px 0" }}>✓ {f}</div>
               ))}
             </div>
-            <button style={{
-              width: "100%", marginTop: 10, padding: "10px",
-              background: plan.popular ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "#f3f4f6",
-              color: plan.popular ? "#fff" : "#374151", border: "none",
-              borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer"
-            }}>Select {plan.name}</button>
+
+            {/* UPI Payment buttons */}
+            <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+              <button onClick={() => window.open(`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}&cu=INR`, "_blank")} style={{
+                flex: 1, padding: "9px", background: "#5f259f", color: "#fff",
+                border: "none", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer"
+              }}>💜 PhonePe</button>
+              <button onClick={() => window.open(`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}&cu=INR`, "_blank")} style={{
+                flex: 1, padding: "9px", background: "#1a73e8", color: "#fff",
+                border: "none", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer"
+              }}>🔵 GPay</button>
+              <button onClick={() => window.open(`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}&cu=INR`, "_blank")} style={{
+                flex: 1, padding: "9px", background: "#00BAF2", color: "#fff",
+                border: "none", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer"
+              }}>💙 Paytm</button>
+            </div>
+            <div style={{ fontSize: 11, color: "#9ca3af", textAlign: "center", marginTop: 6 }}>
+              UPI ID: {KAILNEST_UPI}
+            </div>
           </div>
         ))}
+
+        <div style={{ background: "#fffbeb", borderRadius: 10, padding: 10, marginBottom: 10, fontSize: 12, color: "#92400e", border: "1px solid #fde68a" }}>
+          💡 Payment చేసిన తర్వాత screenshot పంపండి: {" "}
+          <strong>kailnest5@gmail.com</strong> లేదా WhatsApp: <strong>7842375842</strong>
+        </div>
+
         <button onClick={onClose} style={{
           width: "100%", padding: "12px", background: "#f3f4f6", border: "none",
           borderRadius: 12, fontSize: 15, cursor: "pointer", fontWeight: 600, marginTop: 4
