@@ -129,6 +129,97 @@ function Badge({ text, color = "#e0f2fe", textColor = "#0369a1" }) {
 }
 
 // ─── Logo URL (Kailnest official logo) ────────────────────────────────────────
+// ─── Language System ───────────────────────────────────────────────────────────
+const TRANSLATIONS = {
+  en: {
+    appTagline: "PG · Hotels · Apartments · Houses",
+    login: "Login", signup: "Sign Up",
+    fullName: "Full Name", namePlaceholder: "Enter your name",
+    iAm: "I am a", tenant: "Tenant", owner: "Owner",
+    tenantDesc: "Looking for accommodation", ownerDesc: "List my property",
+    phoneNumber: "Phone Number", sendOTP: "Send OTP →", sendingOTP: "Sending OTP...",
+    otpSent: "OTP sent to", enterOTP: "Enter 6-digit OTP", verifyOTP: "Verify OTP ✓",
+    verifying: "Verifying...", changeNumber: "← Change number",
+    welcomeMsg: "Welcome to Kailnest!",
+    terms: "By continuing you agree to our", termsLink: "Terms of Service", and: "and", privacyLink: "Privacy Policy",
+    paymentDetails: "Payment Details (Optional)",
+    paymentDesc: "Add UPI ID or QR code for tenants to pay you directly",
+    upiId: "UPI ID", upiPlaceholder: "yourname@upi or yourname@paytm",
+    qrUpload: "QR Code Upload (optional)", qrBtn: "GPay/PhonePe QR upload",
+    paymentTip: "Tenants can pay you directly via UPI — only platform fee goes to Kailnest",
+    selectCity: "Select your city", searchCity: "Search city...",
+    topCities: "TOP CITIES", allCities: "ALL CITIES",
+    searchPlaceholder: "Search by location, name...",
+    listingsFound: "listings found", adsFirst: "📢 Ads first",
+    bookNow: "Book Now", details: "Details", full: "Full",
+    bedsAvailable: "beds free", noListings: "No listings found",
+    tryFilters: "Try different filters", browseListings: "Browse Listings",
+    saved: "Saved", search: "Search", bookings: "Bookings", profile: "Profile",
+    hello: "Hello 🙏", whatAccommodation: "What type of accommodation do you need?",
+    featured: "⭐ Featured Listings",
+    callOwner: "📞 Call Owner", complaint: "📢 Complaint", vacate: "🏃 Vacate",
+    logout: "Logout",
+  },
+  te: {
+    appTagline: "పీజీ · హోటల్స్ · అపార్ట్‌మెంట్స్ · హౌసెస్",
+    login: "లాగిన్", signup: "సైన్ అప్",
+    fullName: "పూర్తి పేరు", namePlaceholder: "మీ పేరు enter చేయండి",
+    iAm: "నేను", tenant: "అద్దెదారు", owner: "యజమాని",
+    tenantDesc: "వసతి కోసం వెతుకుతున్నాను", ownerDesc: "నా property list చేయాలి",
+    phoneNumber: "ఫోన్ నంబర్", sendOTP: "OTP పంపు →", sendingOTP: "OTP పంపుతున్నాం...",
+    otpSent: "కి OTP పంపబడింది", enterOTP: "6-అంకెల OTP enter చేయండి", verifyOTP: "OTP verify చేయి ✓",
+    verifying: "verify చేస్తున్నాం...", changeNumber: "← నంబర్ మార్చు",
+    welcomeMsg: "Kailnest కి స్వాగతం!",
+    terms: "Continue చేయడం ద్వారా మీరు మా", termsLink: "నిబంధనలకు", and: "మరియు", privacyLink: "గోప్యతా విధానానికి",
+    paymentDetails: "చెల్లింపు వివరాలు (ఐచ్ఛికం)",
+    paymentDesc: "Tenants మీకు directly pay చేయడానికి UPI ID లేదా QR code add చేయండి",
+    upiId: "UPI ID", upiPlaceholder: "yourname@upi లేదా yourname@paytm",
+    qrUpload: "QR Code Upload (ఐచ్ఛికం)", qrBtn: "GPay/PhonePe QR upload చేయి",
+    paymentTip: "Tenants మీ UPI ID కి directly pay చేయవచ్చు — platform fee మాత్రమే Kailnest కి వెళ్తుంది",
+    selectCity: "మీ నగరం select చేయండి", searchCity: "నగరం వెతుకు...",
+    topCities: "ముఖ్య నగరాలు", allCities: "అన్ని నగరాలు",
+    searchPlaceholder: "location, పేరు వెతుకు...",
+    listingsFound: "listings దొరికాయి", adsFirst: "📢 Ads ముందు",
+    bookNow: "ఇప్పుడే బుక్ చేయి", details: "వివరాలు", full: "నిండిపోయింది",
+    bedsAvailable: "బెడ్స్ ఖాళీ", noListings: "listings దొరకలేదు",
+    tryFilters: "వేరే filters try చేయండి", browseListings: "Listings చూడు",
+    saved: "సేవ్", search: "వెతుకు", bookings: "బుకింగ్స్", profile: "ప్రొఫైల్",
+    hello: "నమస్కారం 🙏", whatAccommodation: "మీకు ఏ రకమైన వసతి కావాలి?",
+    featured: "⭐ Featured Listings",
+    callOwner: "📞 యజమానికి call చేయి", complaint: "📢 ఫిర్యాదు", vacate: "🏃 వదిలేయి",
+    logout: "లాగ్అవుట్",
+  },
+  hi: {
+    appTagline: "पीजी · होटल्स · अपार्टमेंट्स · मकान",
+    login: "लॉगिन", signup: "साइन अप",
+    fullName: "पूरा नाम", namePlaceholder: "अपना नाम दर्ज करें",
+    iAm: "मैं हूँ", tenant: "किरायेदार", owner: "मालिक",
+    tenantDesc: "आवास की तलाश में", ownerDesc: "अपनी प्रॉपर्टी लिस्ट करें",
+    phoneNumber: "फ़ोन नंबर", sendOTP: "OTP भेजें →", sendingOTP: "OTP भेज रहे हैं...",
+    otpSent: "को OTP भेजा गया", enterOTP: "6-अंकीय OTP दर्ज करें", verifyOTP: "OTP verify करें ✓",
+    verifying: "verify हो रहा है...", changeNumber: "← नंबर बदलें",
+    welcomeMsg: "Kailnest में आपका स्वागत है!",
+    terms: "जारी रखने पर आप हमारी", termsLink: "शर्तों", and: "और", privacyLink: "गोपनीयता नीति",
+    paymentDetails: "भुगतान विवरण (वैकल्पिक)",
+    paymentDesc: "किरायेदारों को सीधे भुगतान के लिए UPI ID या QR code जोड़ें",
+    upiId: "UPI ID", upiPlaceholder: "yourname@upi या yourname@paytm",
+    qrUpload: "QR Code अपलोड (वैकल्पिक)", qrBtn: "GPay/PhonePe QR अपलोड करें",
+    paymentTip: "किरायेदार आपके UPI ID पर सीधे भुगतान कर सकते हैं — केवल platform fee Kailnest को जाती है",
+    selectCity: "अपना शहर चुनें", searchCity: "शहर खोजें...",
+    topCities: "प्रमुख शहर", allCities: "सभी शहर",
+    searchPlaceholder: "location, नाम खोजें...",
+    listingsFound: "listings मिले", adsFirst: "📢 Ads पहले",
+    bookNow: "अभी बुक करें", details: "विवरण", full: "भरा हुआ",
+    bedsAvailable: "बेड खाली", noListings: "कोई listing नहीं मिली",
+    tryFilters: "अलग filters आज़माएं", browseListings: "Listings देखें",
+    saved: "सेव्ड", search: "खोजें", bookings: "बुकिंग्स", profile: "प्रोफाइल",
+    hello: "नमस्ते 🙏", whatAccommodation: "आपको किस प्रकार का आवास चाहिए?",
+    featured: "⭐ Featured Listings",
+    callOwner: "📞 मालिक को call करें", complaint: "📢 शिकायत", vacate: "🏃 खाली करें",
+    logout: "लॉगआउट",
+  }
+};
+
 // ─── Firebase Configuration ───────────────────────────────────────────────────
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyAC8ZgnSvJEAsEgrGPOSA-Ih9UqNFIOPog",
@@ -1929,7 +2020,9 @@ const CATEGORIES = [
 export default function PGFinderApp() {
   const [tab, setTab] = useState("search");
   const [activeCategory, setActiveCategory] = useState(null);
-  const [user, setUser] = useState(null); // null = not logged in
+  const [user, setUser] = useState(null);
+  const [lang, setLang] = useState("en"); // en | te | hi
+  const t = TRANSLATIONS[lang]; // shortcut for translations // null = not logged in
   const [citySelected, setCitySelected] = useState(false);
   const [selectedCity, setSelectedCity] = useState("All India");
   const [showCityPicker, setShowCityPicker] = useState(false);
@@ -1993,11 +2086,11 @@ export default function PGFinderApp() {
   const sortedFiltered = [...filtered].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
 
   // Show login screen if not logged in
-  if (!user) return <LoginScreen onLogin={(u) => setUser(u)} />;
+  if (!user) return <LoginScreen onLogin={(u) => setUser(u)} lang={lang} setLang={setLang} />;
 
   // Show city selector after login (first time)
   if (!citySelected) return (
-    <CitySelectorScreen onSelectCity={(city) => { setSelectedCity(city); setCitySelected(true); }} />
+    <CitySelectorScreen onSelectCity={(city) => { setSelectedCity(city); setCitySelected(true); }} t={t} />
   );
 
   if (selectedPG) return (
@@ -2019,9 +2112,18 @@ export default function PGFinderApp() {
               <div style={{ fontSize: 10, opacity: 0.8 }}>PG · Hotels · Apartments · Houses</div>
             </div>
           </div>
-          <div style={{ textAlign: "right" }}>
+          <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
             <div style={{ fontSize: 12, color: "#c7d2fe" }}>👤 {user?.name}</div>
-            <div style={{ fontSize: 11, color: "#a5b4fc", marginTop: 2, textTransform: "capitalize" }}>{user?.role}</div>
+            <div style={{ display: "flex", gap: 4 }}>
+              {["en", "te", "hi"].map(l => (
+                <button key={l} onClick={() => setLang(l)} style={{
+                  background: lang === l ? "#fff" : "rgba(255,255,255,0.2)",
+                  color: lang === l ? "#6366f1" : "#fff",
+                  border: "none", borderRadius: 8, padding: "2px 8px",
+                  fontSize: 11, fontWeight: 700, cursor: "pointer"
+                }}>{l === "en" ? "EN" : l === "te" ? "తె" : "हि"}</button>
+              ))}
+            </div>
           </div>
         </div>
 
