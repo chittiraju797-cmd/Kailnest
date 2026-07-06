@@ -1440,7 +1440,222 @@ function VacationNoticeModal({ booking, onClose, onSubmit }) {
   );
 }
 
-// ─── Customer Support Modal ───────────────────────────────────────────────────
+// ─── Owner Listing Form ────────────────────────────────────────────────────────
+function OwnerListingForm({ onClose, onSave, user }) {
+  const [step, setStep] = useState(1); // 1=basic, 2=details, 3=photos, 4=done
+  const [form, setForm] = useState({
+    name: "", category: "PG", type: "Boys", location: "", city: "",
+    nearBy: "", price: "", deposit: "", total: "", description: "",
+    amenities: [], conditions: "", ownerUpi: user?.upiId || "",
+  });
+  const [photos, setPhotos] = useState([]);
+  const [saving, setSaving] = useState(false);
+
+  const ALL_AMENITIES = ["WiFi", "AC", "Food", "Laundry", "CCTV", "Parking", "RO Water", "Security Guard", "Power Backup", "Gym", "Study Room", "Housekeeping"];
+
+  const toggleAmenity = (a) => setForm(f => ({
+    ...f, amenities: f.amenities.includes(a) ? f.amenities.filter(x => x !== a) : [...f.amenities, a]
+  }));
+
+  const handleSave = async () => {
+    setSaving(true);
+    const listing = {
+      ...form,
+      price: Number(form.price),
+      deposit: Number(form.deposit),
+      total: Number(form.total),
+      available: Number(form.total),
+      owner: user?.name || "Owner",
+      phone: user?.phone || "",
+      ownerUpi: form.ownerUpi,
+      photos: ["🏠"],
+      photoUrls: photos.map(p => p.previewUrl),
+      rating: 0, reviews: 0,
+      verified: false, featured: false,
+      category: form.category,
+    };
+    // Save to Firebase
+    const id = await FB.saveListing(listing);
+    setSaving(false);
+    setStep(4);
+    setTimeout(() => { onSave(listing); onClose(); }, 1500);
+  };
+
+  const inputStyle = { width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e5e7eb", fontSize: 14, boxSizing: "border-box", marginBottom: 12, fontFamily: "inherit" };
+  const labelStyle = { fontSize: 13, fontWeight: 700, color: "#374151", display: "block", marginBottom: 4 };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 1000, display: "flex", alignItems: "flex-end" }}>
+      <div style={{ background: "#fff", borderRadius: "22px 22px 0 0", width: "100%", maxHeight: "92vh", display: "flex", flexDirection: "column" }}>
+
+        {/* Header */}
+        <div style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", borderRadius: "22px 22px 0 0", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ color: "#fff", fontWeight: 800, fontSize: 17 }}>🏠 Add New Listing</div>
+            <div style={{ color: "#c7d2fe", fontSize: 12 }}>Step {step} of 3</div>
+          </div>
+          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontWeight: 600 }}>✕</button>
+        </div>
+
+        {/* Progress bar */}
+        <div style={{ height: 4, background: "#f3f4f6" }}>
+          <div style={{ height: "100%", width: `${(step / 3) * 100}%`, background: "linear-gradient(90deg, #6366f1, #8b5cf6)", transition: "width 0.3s" }} />
+        </div>
+
+        <div style={{ overflowY: "auto", flex: 1, padding: 20 }}>
+
+          {step === 4 ? (
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <div style={{ fontSize: 60 }}>🎉</div>
+              <div style={{ fontWeight: 800, fontSize: 20, color: "#16a34a", marginTop: 12 }}>Listing Added!</div>
+              <div style={{ color: "#6b7280", fontSize: 14, marginTop: 6 }}>మీ listing review కోసం submit అయింది. Approve అయిన తర్వాత search లో కనిపిస్తుంది.</div>
+            </div>
+          ) : step === 1 ? (
+            <>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#111" }}>📋 Basic Details</div>
+
+              <label style={labelStyle}>Property Name *</label>
+              <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="ఉదా: Sri Sai PG for Boys" style={inputStyle} />
+
+              <label style={labelStyle}>Category *</label>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
+                {["PG", "Hotel", "Apartment", "House"].map(c => (
+                  <button key={c} onClick={() => setForm({...form, category: c})} style={{
+                    padding: "10px", borderRadius: 10, border: form.category === c ? "2px solid #6366f1" : "1.5px solid #e5e7eb",
+                    background: form.category === c ? "#eff6ff" : "#f9fafb",
+                    color: form.category === c ? "#6366f1" : "#374151", fontWeight: 700, cursor: "pointer", fontSize: 13
+                  }}>
+                    {c === "PG" ? "🛏️" : c === "Hotel" ? "🏨" : c === "Apartment" ? "🏢" : "🏠"} {c}
+                  </button>
+                ))}
+              </div>
+
+              <label style={labelStyle}>For Whom *</label>
+              <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+                {["Boys", "Girls", "Co-ed", "Family"].map(t => (
+                  <button key={t} onClick={() => setForm({...form, type: t})} style={{
+                    flex: 1, padding: "8px", borderRadius: 10, fontSize: 12, fontWeight: 600,
+                    border: form.type === t ? "2px solid #6366f1" : "1px solid #e5e7eb",
+                    background: form.type === t ? "#eff6ff" : "#f9fafb",
+                    color: form.type === t ? "#6366f1" : "#374151", cursor: "pointer"
+                  }}>{t === "Boys" ? "👨" : t === "Girls" ? "👩" : t === "Co-ed" ? "👥" : "👨‍👩‍👧"} {t}</button>
+                ))}
+              </div>
+
+              <label style={labelStyle}>Location / Address *</label>
+              <input value={form.location} onChange={e => setForm({...form, location: e.target.value})} placeholder="ఉదా: Dilsukhnagar, Hyderabad" style={inputStyle} />
+
+              <label style={labelStyle}>City *</label>
+              <input value={form.city} onChange={e => setForm({...form, city: e.target.value})} placeholder="ఉదా: Hyderabad" style={inputStyle} />
+
+              <label style={labelStyle}>Nearby Landmark</label>
+              <input value={form.nearBy} onChange={e => setForm({...form, nearBy: e.target.value})} placeholder="ఉదా: Osmania University 1km" style={inputStyle} />
+            </>
+          ) : step === 2 ? (
+            <>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#111" }}>💰 Pricing & Amenities</div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
+                <div>
+                  <label style={labelStyle}>Rent/month *</label>
+                  <input value={form.price} onChange={e => setForm({...form, price: e.target.value})} placeholder="₹5000" type="number" style={{...inputStyle, marginBottom: 0}} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Deposit</label>
+                  <input value={form.deposit} onChange={e => setForm({...form, deposit: e.target.value})} placeholder="₹10000" type="number" style={{...inputStyle, marginBottom: 0}} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Total Beds</label>
+                  <input value={form.total} onChange={e => setForm({...form, total: e.target.value})} placeholder="10" type="number" style={{...inputStyle, marginBottom: 0}} />
+                </div>
+              </div>
+
+              <label style={{...labelStyle, marginTop: 12}}>Amenities</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+                {ALL_AMENITIES.map(a => (
+                  <button key={a} onClick={() => toggleAmenity(a)} style={{
+                    padding: "6px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                    border: form.amenities.includes(a) ? "2px solid #6366f1" : "1px solid #e5e7eb",
+                    background: form.amenities.includes(a) ? "#eff6ff" : "#f9fafb",
+                    color: form.amenities.includes(a) ? "#6366f1" : "#374151"
+                  }}>{a}</button>
+                ))}
+              </div>
+
+              <label style={labelStyle}>Description</label>
+              <textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})}
+                placeholder="మీ property గురించి వివరంగా రాయండి..." rows={3}
+                style={{...inputStyle, resize: "none"}} />
+
+              <label style={labelStyle}>Rules & Conditions</label>
+              <textarea value={form.conditions} onChange={e => setForm({...form, conditions: e.target.value})}
+                placeholder="ఉదా: No late entry after 11PM. 2 months notice required." rows={2}
+                style={{...inputStyle, resize: "none"}} />
+
+              <label style={labelStyle}>Your UPI ID (for tenant payments)</label>
+              <input value={form.ownerUpi} onChange={e => setForm({...form, ownerUpi: e.target.value})}
+                placeholder="yourname@ybl" style={inputStyle} />
+            </>
+          ) : step === 3 ? (
+            <>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8, color: "#111" }}>📸 Photos</div>
+              <div style={{ fontSize: 13, color: "#6b7280", marginBottom: 16 }}>Good photos get 3x more enquiries!</div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
+                {photos.map((p, i) => (
+                  <div key={i} style={{ position: "relative", borderRadius: 10, overflow: "hidden", height: 80 }}>
+                    <img src={p.previewUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <button onClick={() => setPhotos(prev => prev.filter((_, idx) => idx !== i))} style={{
+                      position: "absolute", top: 2, right: 2, background: "rgba(0,0,0,0.6)",
+                      color: "#fff", border: "none", borderRadius: "50%", width: 20, height: 20, fontSize: 11, cursor: "pointer"
+                    }}>✕</button>
+                  </div>
+                ))}
+                {photos.length < 8 && (
+                  <label style={{ height: 80, borderRadius: 10, border: "2px dashed #c7d2fe", background: "#f5f3ff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#6366f1" }}>
+                    <span style={{ fontSize: 24 }}>📷</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, marginTop: 2 }}>Add</span>
+                    <input type="file" accept="image/*" multiple onChange={e => {
+                      const files = Array.from(e.target.files).slice(0, 8 - photos.length);
+                      setPhotos(prev => [...prev, ...files.map(f => ({ file: f, previewUrl: URL.createObjectURL(f) }))]);
+                    }} style={{ display: "none" }} />
+                  </label>
+                )}
+              </div>
+
+              <div style={{ background: "#eff6ff", borderRadius: 12, padding: 12, fontSize: 12, color: "#1e40af" }}>
+                📌 First photo = cover photo in search results
+              </div>
+            </>
+          ) : null}
+        </div>
+
+        {/* Bottom buttons */}
+        {step < 4 && (
+          <div style={{ padding: "12px 20px 24px", borderTop: "1px solid #f3f4f6", display: "flex", gap: 10 }}>
+            {step > 1 && (
+              <button onClick={() => setStep(step - 1)} style={{ flex: 1, padding: "12px", background: "#f3f4f6", border: "none", borderRadius: 12, fontSize: 14, cursor: "pointer", fontWeight: 600 }}>← Back</button>
+            )}
+            {step < 3 ? (
+              <button onClick={() => setStep(step + 1)} disabled={step === 1 && (!form.name || !form.location || !form.city)} style={{
+                flex: 2, padding: "12px",
+                background: (step === 1 && (!form.name || !form.location || !form.city)) ? "#d1d5db" : "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                color: "#fff", border: "none", borderRadius: 12, fontSize: 14, cursor: "pointer", fontWeight: 700
+              }}>Next →</button>
+            ) : (
+              <button onClick={handleSave} disabled={saving} style={{
+                flex: 2, padding: "12px", background: saving ? "#d1d5db" : "linear-gradient(135deg, #16a34a, #15803d)",
+                color: "#fff", border: "none", borderRadius: 12, fontSize: 14, cursor: "pointer", fontWeight: 700
+              }}>{saving ? "Saving..." : "✅ Submit Listing"}</button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
 const SUPPORT_NUMBER = "7842375842";
 const SUPPORT_WHATSAPP = "7842375842";
 const SUPPORT_EMAIL = "kailnest5@gmail.com";
@@ -2047,6 +2262,7 @@ export default function PGFinderApp() {
   const [vacatedBookings, setVacatedBookings] = useState([]);
   const [showSupport, setShowSupport] = useState(false);
   const [showMediaUpload, setShowMediaUpload] = useState(false);
+  const [showListingForm, setShowListingForm] = useState(false);
   const [complaintBooking, setComplaintBooking] = useState(null);
   const [complaints, setComplaints] = useState([]);
   const [showOwnerComplaints, setShowOwnerComplaints] = useState(false);
@@ -2441,7 +2657,7 @@ export default function PGFinderApp() {
               ))}
             </div>
 
-            <button onClick={() => setShowSubscription(true)} style={{
+            <button onClick={() => setShowListingForm(true)} style={{
               width: "100%", padding: "14px",
               background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
               color: "#fff", border: "none", borderRadius: 14, fontSize: 15,
@@ -2671,6 +2887,13 @@ export default function PGFinderApp() {
       {showSubscription && <OwnerSubscriptionModal onClose={() => setShowSubscription(false)} />}
       {showSupport && <CustomerSupportModal onClose={() => setShowSupport(false)} />}
       {showTerms && <TermsPrivacyModal type={showTerms} onClose={() => setShowTerms(null)} />}
+      {showListingForm && (
+        <OwnerListingForm
+          onClose={() => setShowListingForm(false)}
+          onSave={(listing) => { setShowListingForm(false); }}
+          user={user}
+        />
+      )}
       {showMediaUpload && (
         <OwnerMediaUploadModal
           onClose={() => setShowMediaUpload(false)}
