@@ -3194,6 +3194,14 @@ export default function PGFinderApp() {
               }} onClick={() => {
                 if (item.label === "List Your PG") setShowSubscription(true);
                 if (item.label === "Help & Support") setShowSupport(true);
+                if (item.label === "Notifications") {
+                  if (window.requestPushPermission) {
+                    window.requestPushPermission().then(granted => {
+                      if (granted) alert("✅ Notifications enable అయ్యాయి!");
+                      else alert("Notifications allow చేయండి — browser settings లో.");
+                    });
+                  }
+                }
                 if (item.label === "Terms of Service") setShowTerms("terms");
                 if (item.label === "Privacy Policy") setShowTerms("privacy");
                 if (item.label === "Logout") { setUser(null); setCitySelected(false); setTab("search"); setActiveCategory(null); }
