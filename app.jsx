@@ -2886,11 +2886,46 @@ export default function PGFinderApp() {
                       </div>
                     </div>
 
-                    <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-                      <a href={`tel:${b.phone}`} style={{ flex: 1, textAlign: "center", padding: "9px", background: "#f0fdf4", color: "#16a34a", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none", border: "1px solid #bbf7d0" }}>📞 Call</a>
-                      <button onClick={() => setChatPG(b)} style={{ flex: 1, padding: "9px", background: "#eff6ff", color: "#6366f1", border: "1px solid #bfdbfe", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>💬 Chat</button>
-                      <button onClick={() => setShowAgreement(b)} style={{ flex: 1, padding: "9px", background: "#f5f3ff", color: "#7c3aed", border: "1px solid #ddd6fe", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>📄 Agreement</button>
+                    <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+                      <a href={`tel:${b.phone}`} style={{ flex: 1, textAlign: "center", padding: "9px", background: "#f0fdf4", color: "#16a34a", borderRadius: 10, fontSize: 12, fontWeight: 700, textDecoration: "none", border: "1px solid #bbf7d0" }}>📞 Call</a>
+                      <button onClick={() => setChatPG(b)} style={{ flex: 1, padding: "9px", background: "#eff6ff", color: "#6366f1", border: "1px solid #bfdbfe", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>💬 Chat</button>
+                      <button onClick={() => setShowAgreement(b)} style={{ flex: 1, padding: "9px", background: "#f5f3ff", color: "#7c3aed", border: "1px solid #ddd6fe", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>📄 PDF</button>
+                      <button onClick={() => setComplaintBooking(b)} style={{ flex: 1, padding: "9px", background: "#fff", color: "#dc2626", border: "1.5px solid #fecaca", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>📢</button>
+                      {!isVacated && (
+                        <button onClick={() => setVacationBooking(b)} style={{ flex: 1, padding: "9px", background: "linear-gradient(135deg, #f59e0b, #ef4444)", color: "#fff", border: "none", borderRadius: 10, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>🏃 Vacate</button>
+                      )}
                     </div>
+
+                    {/* Cash payment verification */}
+                    {b.cashStatus === "pending" && (
+                      <div style={{ marginTop: 10, background: "#fffbeb", borderRadius: 10, padding: "10px 12px", border: "1px solid #fde68a" }}>
+                        <div style={{ fontWeight: 700, fontSize: 12, color: "#92400e", marginBottom: 6 }}>💵 Cash Payment Pending</div>
+                        <div style={{ fontSize: 11, color: "#78350f", marginBottom: 8 }}>Owner కి cash ఇచ్చారా? Confirm చేయండి.</div>
+                        <button onClick={() => {
+                          setBookings(prev => prev.map((bk, idx) => idx === i ? { ...bk, cashStatus: "tenant_confirmed" } : bk));
+                          setOwnerNotifications(prev => [...prev, {
+                            id: Date.now(), type: "cash_confirmed", pgName: b.name,
+                            message: `✅ Tenant cash payment confirm చేశారు — ${b.name}.`,
+                            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), read: false,
+                          }]);
+                        }} style={{ width: "100%", padding: "8px", background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "#fff", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>💵 Cash Pay చేశాను — Confirm</button>
+                      </div>
+                    )}
+                    {b.cashStatus === "tenant_confirmed" && (
+                      <div style={{ marginTop: 10, background: "#fef9c3", borderRadius: 10, padding: "8px 12px", border: "1px solid #fde68a" }}>
+                        <div style={{ fontSize: 12, color: "#854d0e", fontWeight: 700 }}>⏳ Cash confirmed — Owner verification pending</div>
+                      </div>
+                    )}
+                    {b.cashStatus === "owner_verified" && (
+                      <div style={{ marginTop: 10, background: "#f0fdf4", borderRadius: 10, padding: "8px 12px", border: "1px solid #bbf7d0" }}>
+                        <div style={{ fontSize: 12, color: "#166534", fontWeight: 700 }}>✅ Cash Payment Complete!</div>
+                      </div>
+                    )}
+                    {b.cashStatus === "online_paid" && (
+                      <div style={{ marginTop: 10, background: "#f0fdf4", borderRadius: 10, padding: "8px 12px", border: "1px solid #bbf7d0" }}>
+                        <div style={{ fontSize: 12, color: "#166534", fontWeight: 700 }}>✅ Online Payment Complete</div>
+                      </div>
+                    )}
 
                     {/* Payment status */}
                     {b.cashStatus === "pending" && (
