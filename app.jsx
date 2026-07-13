@@ -983,6 +983,12 @@ function PGDetail({ pg, onBack, onBook }) {
             padding: "10px", fontSize: 14, fontWeight: 700, textDecoration: "none",
             border: "1px solid #bbf7d0"
           }}>📞 Call Owner</a>
+          <button onClick={() => setChatPG && setChatPG(pg)} style={{
+            display: "block", width: "100%", marginTop: 8,
+            background: "#eff6ff", color: "#6366f1", borderRadius: 10,
+            padding: "10px", fontSize: 14, fontWeight: 700,
+            border: "1px solid #bfdbfe", cursor: "pointer"
+          }}>💬 Chat with Owner</button>
         </div>
 
         {/* Conditions */}
@@ -996,10 +1002,21 @@ function PGDetail({ pg, onBack, onBook }) {
           <div style={{ fontWeight: 700, marginBottom: 6 }}>🗺️ Nearby</div>
           <div style={{ fontSize: 13, color: "#374151" }}>🏫 {pg.nearBy}</div>
           <div style={{
-            marginTop: 10, background: "#f3f4f6", borderRadius: 10, height: 80,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "#9ca3af", fontSize: 13
-          }}>🗺️ Map View (GPS integration)</div>
+            marginTop: 10, borderRadius: 12, overflow: "hidden", height: 160,
+            border: "1px solid #e5e7eb"
+          }}>
+            <iframe
+              title="map"
+              width="100%" height="160"
+              style={{ border: 0 }}
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=78.0,12.0,80.5,18.5&layer=mapnik&marker=${encodeURIComponent(pg.location)}`}
+              allowFullScreen
+            />
+            <a href={`https://www.google.com/maps/search/${encodeURIComponent(pg.location)}`} target="_blank" rel="noreferrer" style={{
+              display: "block", textAlign: "center", padding: "6px",
+              background: "#f3f4f6", fontSize: 12, color: "#6366f1", fontWeight: 600, textDecoration: "none"
+            }}>📍 Google Maps లో చూడు →</a>
+          </div>
         </div>
 
         {/* Book Button */}
@@ -1525,7 +1542,131 @@ function VacationNoticeModal({ booking, onClose, onSubmit }) {
   );
 }
 
-// ─── Owner Listing Form ────────────────────────────────────────────────────────
+// ─── Chat System (Tenant ↔ Owner) ─────────────────────────────────────────────
+function ChatModal({ pg, user, onClose }) {
+  const [messages, setMessages] = useState([
+    { id: 1, from: "owner", name: pg.owner, text: `నమస్కారం! ${pg.name} గురించి ఏమైనా అడగాలా?`, time: "10:00 AM", read: true },
+  ]);
+  const [input, setInput] = useState("");
+  const [sending, setSending] = useState(false);
+  const chatEndRef = React.useRef(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+    setSending(true);
+    const newMsg = {
+      id: Date.now(),
+      from: "tenant",
+      name: user?.name || "You",
+      text: input,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      read: false,
+    };
+    setMessages(prev => [...prev, newMsg]);
+
+    // Save to Firebase
+    try {
+      if (window.db) {
+        await window.db.collection("chats")
+          .doc(`${pg.id}_${user?.uid || "guest"}`)
+          .collection("messages")
+          .add({ ...newMsg, createdAt: new Date().toISOString() });
+      }
+    } catch (e) { console.log("Chat save error:", e); }
+
+    setInput("");
+    setSending(false);
+
+    // Auto reply simulation (in real app owner replies manually)
+    setTimeout(() => {
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        from: "owner",
+        name: pg.owner,
+        text: "మీ message వచ్చింది. నేను త్వరలో reply చేస్తాను! 🙏",
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        read: true,
+      }]);
+    }, 1500);
+  };
+
+  const QUICK_MSGS = ["Room available ఉందా?", "Price negotiate అవుతుందా?", "Photos చూపిస్తారా?", "Visit చేయవచ్చా?"];
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "#fff", zIndex: 2000, display: "flex", flexDirection: "column" }}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", padding: "50px 16px 14px", color: "#fff", display: "flex", alignItems: "center", gap: 12 }}>
+        <button onClick={onClose} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", borderRadius: 8, padding: "6px 10px", cursor: "pointer", fontSize: 16 }}>←</button>
+        <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 700 }}>{pg.owner[0]}</div>
+        <div>
+          <div style={{ fontWeight: 800, fontSize: 15 }}>{pg.owner}</div>
+          <div style={{ fontSize: 11, opacity: 0.85 }}>🏠 {pg.name}</div>
+        </div>
+        <a href={`tel:${pg.phone}`} style={{ marginLeft: "auto", background: "rgba(255,255,255,0.2)", color: "#fff", borderRadius: 8, padding: "6px 12px", textDecoration: "none", fontSize: 13, fontWeight: 700 }}>📞</a>
+      </div>
+
+      {/* Messages */}
+      <div style={{ flex: 1, overflowY: "auto", padding: 16, background: "#f9fafb" }}>
+        {messages.map(m => (
+          <div key={m.id} style={{ display: "flex", flexDirection: m.from === "tenant" ? "row-reverse" : "row", marginBottom: 12, gap: 8, alignItems: "flex-end" }}>
+            {m.from === "owner" && (
+              <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#6366f1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "#fff", fontWeight: 700, flexShrink: 0 }}>{m.name[0]}</div>
+            )}
+            <div style={{ maxWidth: "75%" }}>
+              <div style={{
+                padding: "10px 13px",
+                borderRadius: m.from === "tenant" ? "14px 14px 4px 14px" : "14px 14px 14px 4px",
+                background: m.from === "tenant" ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "#fff",
+                color: m.from === "tenant" ? "#fff" : "#111",
+                fontSize: 14, lineHeight: 1.5,
+                boxShadow: "0 1px 4px rgba(0,0,0,0.08)"
+              }}>{m.text}</div>
+              <div style={{ fontSize: 10, color: "#9ca3af", marginTop: 3, textAlign: m.from === "tenant" ? "right" : "left" }}>
+                {m.time} {m.from === "tenant" && (m.read ? "✓✓" : "✓")}
+              </div>
+            </div>
+          </div>
+        ))}
+        <div ref={chatEndRef} />
+      </div>
+
+      {/* Quick messages */}
+      <div style={{ padding: "8px 16px 0", background: "#fff", borderTop: "1px solid #f3f4f6" }}>
+        <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 6 }}>
+          {QUICK_MSGS.map(q => (
+            <button key={q} onClick={() => setInput(q)} style={{
+              background: "#eff6ff", color: "#4338ca", border: "1px solid #bfdbfe",
+              borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 600,
+              cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0
+            }}>{q}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Input */}
+      <div style={{ padding: "10px 16px 24px", background: "#fff", display: "flex", gap: 8, alignItems: "center" }}>
+        <input
+          value={input} onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && sendMessage()}
+          placeholder="Message type చేయండి..."
+          style={{ flex: 1, padding: "11px 14px", borderRadius: 24, border: "1.5px solid #e5e7eb", fontSize: 14, outline: "none" }}
+        />
+        <button onClick={sendMessage} disabled={!input.trim() || sending} style={{
+          width: 44, height: 44, borderRadius: "50%",
+          background: input.trim() ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "#d1d5db",
+          border: "none", color: "#fff", fontSize: 18, cursor: input.trim() ? "pointer" : "not-allowed",
+          display: "flex", alignItems: "center", justifyContent: "center"
+        }}>➤</button>
+      </div>
+    </div>
+  );
+}
+
+
 function OwnerListingForm({ onClose, onSave, user }) {
   const [step, setStep] = useState(1); // 1=basic, 2=details, 3=photos, 4=done
   const [form, setForm] = useState({
@@ -2348,6 +2489,8 @@ export default function PGFinderApp() {
   const [showSupport, setShowSupport] = useState(false);
   const [showMediaUpload, setShowMediaUpload] = useState(false);
   const [showListingForm, setShowListingForm] = useState(false);
+  const [chatPG, setChatPG] = useState(null);
+  const [showAgreement, setShowAgreement] = useState(null);
   const [complaintBooking, setComplaintBooking] = useState(null);
   const [complaints, setComplaints] = useState([]);
   const [showOwnerComplaints, setShowOwnerComplaints] = useState(false);
@@ -2972,6 +3115,7 @@ export default function PGFinderApp() {
       {showSubscription && <OwnerSubscriptionModal onClose={() => setShowSubscription(false)} />}
       {showSupport && <CustomerSupportModal onClose={() => setShowSupport(false)} />}
       {showTerms && <TermsPrivacyModal type={showTerms} onClose={() => setShowTerms(null)} />}
+      {chatPG && <ChatModal pg={chatPG} user={user} onClose={() => setChatPG(null)} />}
       {showListingForm && (
         <OwnerListingForm
           onClose={() => setShowListingForm(false)}
