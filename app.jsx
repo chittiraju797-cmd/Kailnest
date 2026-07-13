@@ -1542,7 +1542,124 @@ function VacationNoticeModal({ booking, onClose, onSubmit }) {
   );
 }
 
-// ─── Chat System (Tenant ↔ Owner) ─────────────────────────────────────────────
+// ─── Rent Agreement Generator ─────────────────────────────────────────────────
+function RentAgreementModal({ booking, user, onClose }) {
+  const today = new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" });
+  const endDate = new Date();
+  endDate.setMonth(endDate.getMonth() + 11);
+  const endDateStr = endDate.toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" });
+
+  const printAgreement = () => {
+    const content = document.getElementById("rent-agreement-content").innerHTML;
+    const win = window.open("", "_blank");
+    win.document.write(`
+      <html><head><title>Rent Agreement - ${booking?.name}</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 40px; color: #000; font-size: 14px; line-height: 1.8; }
+        h1 { text-align: center; font-size: 20px; text-decoration: underline; }
+        h3 { font-size: 15px; margin-top: 20px; }
+        .party { background: #f5f5f5; padding: 10px; border-radius: 6px; margin: 10px 0; }
+        .clause { margin: 10px 0; }
+        .sign-section { display: flex; justify-content: space-between; margin-top: 60px; }
+        .sign-box { text-align: center; width: 45%; }
+        .sign-line { border-top: 1px solid #000; margin-top: 40px; }
+        @media print { body { padding: 20px; } }
+      </style>
+      </head><body>${content}</body></html>
+    `);
+    win.document.close();
+    win.print();
+  };
+
+  const tenantName = user?.name || "Tenant Name";
+  const ownerName = booking?.owner || "Owner Name";
+  const pgName = booking?.name || "Property Name";
+  const location = booking?.location || "Property Address";
+  const rent = booking?.price ? `₹${booking.price.toLocaleString()}` : "₹_____";
+  const deposit = booking?.deposit ? `₹${booking.deposit.toLocaleString()}` : "₹_____";
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "#fff", zIndex: 2000, display: "flex", flexDirection: "column", fontFamily: "system-ui, sans-serif" }}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg, #1e1b4b, #4338ca)", padding: "50px 16px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <div style={{ color: "#fff", fontWeight: 800, fontSize: 17 }}>📄 Rent Agreement</div>
+          <div style={{ color: "#c7d2fe", fontSize: 12 }}>{pgName}</div>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={printAgreement} style={{ background: "#fff", color: "#4338ca", border: "none", borderRadius: 8, padding: "8px 14px", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>🖨️ Print/PDF</button>
+          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", borderRadius: 8, padding: "8px 12px", cursor: "pointer", fontWeight: 600 }}>✕</button>
+        </div>
+      </div>
+
+      {/* Agreement content */}
+      <div style={{ flex: 1, overflowY: "auto", padding: 20 }}>
+        <div id="rent-agreement-content">
+          <h1 style={{ textAlign: "center", fontSize: 18, textDecoration: "underline", marginBottom: 20 }}>RENT AGREEMENT</h1>
+
+          <p style={{ textAlign: "center", color: "#6b7280", fontSize: 13, marginBottom: 20 }}>This agreement is made on <strong>{today}</strong></p>
+
+          <h3 style={{ fontSize: 14, fontWeight: 800, marginBottom: 8 }}>PARTIES INVOLVED:</h3>
+
+          <div style={{ background: "#f9fafb", borderRadius: 10, padding: 14, marginBottom: 12, border: "1px solid #e5e7eb" }}>
+            <div style={{ fontWeight: 700, color: "#6366f1", marginBottom: 4 }}>LANDLORD (Owner):</div>
+            <div><strong>Name:</strong> {ownerName}</div>
+            <div><strong>Phone:</strong> {booking?.phone || "________"}</div>
+            <div><strong>Property:</strong> {pgName}</div>
+            <div><strong>Address:</strong> {location}</div>
+          </div>
+
+          <div style={{ background: "#f9fafb", borderRadius: 10, padding: 14, marginBottom: 16, border: "1px solid #e5e7eb" }}>
+            <div style={{ fontWeight: 700, color: "#6366f1", marginBottom: 4 }}>TENANT:</div>
+            <div><strong>Name:</strong> {tenantName}</div>
+            <div><strong>Phone:</strong> {user?.phone || "________"}</div>
+            <div><strong>Email:</strong> {user?.email || "________"}</div>
+          </div>
+
+          <h3 style={{ fontSize: 14, fontWeight: 800, marginBottom: 8 }}>TERMS & CONDITIONS:</h3>
+
+          {[
+            { no: "1", title: "Rent Amount", text: `Monthly rent is ${rent}, payable on or before 5th of every month.` },
+            { no: "2", title: "Security Deposit", text: `A refundable security deposit of ${deposit} has been paid by the Tenant.` },
+            { no: "3", title: "Agreement Period", text: `This agreement is valid from ${today} to ${endDateStr} (11 months).` },
+            { no: "4", title: "Notice Period", text: `Either party must give minimum 15 days written notice before vacating/terminating this agreement.` },
+            { no: "5", title: "Utilities", text: `Electricity, water, and other utility bills shall be paid by the Tenant as per actual usage.` },
+            { no: "6", title: "Maintenance", text: `The Tenant shall maintain the property in good condition. Damage caused by the Tenant shall be repaired at Tenant's expense.` },
+            { no: "7", title: "Sub-letting", text: `The Tenant shall not sub-let or transfer the property to any other person without written consent of the Landlord.` },
+            { no: "8", title: "Rules", text: booking?.conditions || `Tenant must follow all property rules including timing, visitor policies, and community guidelines.` },
+            { no: "9", title: "Termination", text: `This agreement can be terminated by mutual consent with proper notice period as mentioned above.` },
+            { no: "10", title: "Platform", text: `This booking was facilitated by Kailnest (kailnest.in). For support: kailnest5@gmail.com | 7842375842` },
+          ].map(c => (
+            <div key={c.no} style={{ marginBottom: 10, padding: "10px 14px", background: "#fafafa", borderRadius: 8, borderLeft: "3px solid #6366f1" }}>
+              <div style={{ fontWeight: 700, fontSize: 13 }}>{c.no}. {c.title}</div>
+              <div style={{ fontSize: 13, color: "#374151", marginTop: 3 }}>{c.text}</div>
+            </div>
+          ))}
+
+          {/* Signatures */}
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 40, paddingTop: 20, borderTop: "1px solid #e5e7eb" }}>
+            <div style={{ textAlign: "center", width: "45%" }}>
+              <div style={{ height: 50, borderBottom: "1px solid #111", marginBottom: 8 }} />
+              <div style={{ fontWeight: 700, fontSize: 13 }}>{ownerName}</div>
+              <div style={{ fontSize: 11, color: "#6b7280" }}>Landlord Signature</div>
+            </div>
+            <div style={{ textAlign: "center", width: "45%" }}>
+              <div style={{ height: 50, borderBottom: "1px solid #111", marginBottom: 8 }} />
+              <div style={{ fontWeight: 700, fontSize: 13 }}>{tenantName}</div>
+              <div style={{ fontSize: 11, color: "#6b7280" }}>Tenant Signature</div>
+            </div>
+          </div>
+
+          <div style={{ textAlign: "center", marginTop: 20, fontSize: 11, color: "#9ca3af" }}>
+            Generated by Kailnest — kailnest.in
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 function ChatModal({ pg, user, onClose }) {
   const [messages, setMessages] = useState([
     { id: 1, from: "owner", name: pg.owner, text: `నమస్కారం! ${pg.name} గురించి ఏమైనా అడగాలా?`, time: "10:00 AM", read: true },
@@ -2771,10 +2888,8 @@ export default function PGFinderApp() {
 
                     <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
                       <a href={`tel:${b.phone}`} style={{ flex: 1, textAlign: "center", padding: "9px", background: "#f0fdf4", color: "#16a34a", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none", border: "1px solid #bbf7d0" }}>📞 Call</a>
-                      <button onClick={() => setComplaintBooking(b)} style={{ flex: 1, padding: "9px", background: "#fff", color: "#dc2626", border: "1.5px solid #fecaca", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>📢 Complaint</button>
-                      {!isVacated && (
-                        <button onClick={() => setVacationBooking(b)} style={{ flex: 1, padding: "9px", background: "linear-gradient(135deg, #f59e0b, #ef4444)", color: "#fff", border: "none", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>🏃 Vacate</button>
-                      )}
+                      <button onClick={() => setChatPG(b)} style={{ flex: 1, padding: "9px", background: "#eff6ff", color: "#6366f1", border: "1px solid #bfdbfe", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>💬 Chat</button>
+                      <button onClick={() => setShowAgreement(b)} style={{ flex: 1, padding: "9px", background: "#f5f3ff", color: "#7c3aed", border: "1px solid #ddd6fe", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>📄 Agreement</button>
                     </div>
 
                     {/* Payment status */}
@@ -3116,6 +3231,7 @@ export default function PGFinderApp() {
       {showSupport && <CustomerSupportModal onClose={() => setShowSupport(false)} />}
       {showTerms && <TermsPrivacyModal type={showTerms} onClose={() => setShowTerms(null)} />}
       {chatPG && <ChatModal pg={chatPG} user={user} onClose={() => setChatPG(null)} />}
+      {showAgreement && <RentAgreementModal booking={showAgreement} user={user} onClose={() => setShowAgreement(null)} />}
       {showListingForm && (
         <OwnerListingForm
           onClose={() => setShowListingForm(false)}
