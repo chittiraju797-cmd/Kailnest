@@ -1232,132 +1232,121 @@ function BookingModal({ pg, onClose, onPay, ownerUpi, ownerQr }) {
   );
 }
 
-function OwnerSubscriptionModal({ onClose }) {
+function OwnerSubscriptionModal({ onClose, onSelectPlan }) {
   const KAILNEST_UPI = "7993315482-2@ybl";
-  const plans = [
-    { name: "Basic", price: 499, period: "month", listings: 1, features: ["1 PG listing", "Basic analytics", "Email support"] },
-    { name: "Pro", price: 2999, period: "year", listings: 5, features: ["5 PG listings", "Priority listing", "Photo gallery", "Chat with tenants", "Detailed analytics"], popular: true },
-    { name: "Premium", price: 7999, period: "year", listings: 20, features: ["20 PG listings", "Top search placement", "Verified badge", "Dedicated support", "Owner dashboard"] },
-  ];
+  const PRICE = 199;
+  const [copied, setCopied] = useState(false);
+  const [paid, setPaid] = useState(false);
 
-  const [copied, setCopied] = useState("");
-
-  const copyUPI = (planName) => {
-    navigator.clipboard?.writeText(KAILNEST_UPI).then(() => {
-      setCopied(planName);
-      setTimeout(() => setCopied(""), 2000);
-    }).catch(() => {
-      // fallback
+  const copyUPI = () => {
+    navigator.clipboard?.writeText(KAILNEST_UPI).catch(() => {
       const el = document.createElement("textarea");
       el.value = KAILNEST_UPI;
       document.body.appendChild(el);
       el.select();
       document.execCommand("copy");
       document.body.removeChild(el);
-      setCopied(planName);
-      setTimeout(() => setCopied(""), 2000);
     });
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handlePaidConfirm = () => {
+    setPaid(true);
+    setTimeout(() => {
+      onSelectPlan && onSelectPlan("Basic");
+      onClose();
+    }, 1500);
   };
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "flex-end", zIndex: 1000 }}>
-      <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", width: "100%", padding: 20, maxHeight: "85vh", overflowY: "auto" }}>
-        <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 4 }}>🏠 List Your PG</div>
-        <div style={{ color: "#6b7280", fontSize: 13, marginBottom: 16 }}>Choose a subscription plan</div>
-        {plans.map(plan => (
-          <div key={plan.name} style={{
-            border: plan.popular ? "2px solid #6366f1" : "1px solid #e5e7eb",
-            borderRadius: 14, padding: 14, marginBottom: 10, position: "relative"
-          }}>
-            {plan.popular && (
-              <div style={{
-                position: "absolute", top: -1, right: 12,
-                background: "#6366f1", color: "#fff", fontSize: 11,
-                fontWeight: 700, padding: "2px 10px", borderRadius: "0 0 8px 8px"
-              }}>Most Popular</div>
-            )}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <div style={{ fontWeight: 800, fontSize: 15 }}>{plan.name}</div>
-                <div style={{ fontSize: 12, color: "#6b7280" }}>Up to {plan.listings} listing{plan.listings > 1 ? "s" : ""}</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <span style={{ fontWeight: 800, fontSize: 18, color: "#6366f1" }}>₹{plan.price}</span>
-                <span style={{ fontSize: 11, color: "#9ca3af" }}>/{plan.period}</span>
-              </div>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "flex-end", zIndex: 1000 }}>
+      <div style={{ background: "#fff", borderRadius: "22px 22px 0 0", width: "100%", padding: 20, maxHeight: "85vh", overflowY: "auto" }}>
+
+        {paid ? (
+          <div style={{ textAlign: "center", padding: "30px 0" }}>
+            <div style={{ fontSize: 60 }}>🎉</div>
+            <div style={{ fontWeight: 800, fontSize: 20, color: "#16a34a", marginTop: 12 }}>Payment Confirmed!</div>
+            <div style={{ color: "#6b7280", fontSize: 14, marginTop: 6 }}>మీ listing activate అవుతుంది</div>
+          </div>
+        ) : (
+          <>
+            {/* Header */}
+            <div style={{ textAlign: "center", marginBottom: 20 }}>
+              <div style={{ fontSize: 40, marginBottom: 8 }}>🏠</div>
+              <div style={{ fontWeight: 900, fontSize: 22, color: "#111" }}>List Your Property</div>
+              <div style={{ color: "#6b7280", fontSize: 14, marginTop: 4 }}>ఒక్క listing కి ₹199 మాత్రమే</div>
             </div>
-            <div style={{ marginTop: 8 }}>
-              {plan.features.map(f => (
-                <div key={f} style={{ fontSize: 12, color: "#374151", padding: "2px 0" }}>✓ {f}</div>
+
+            {/* Price card */}
+            <div style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", borderRadius: 16, padding: 20, marginBottom: 16, color: "#fff", textAlign: "center" }}>
+              <div style={{ fontSize: 13, opacity: 0.85, marginBottom: 4 }}>Per Listing Fee</div>
+              <div style={{ fontSize: 48, fontWeight: 900 }}>₹199</div>
+              <div style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>One-time payment per listing</div>
+            </div>
+
+            {/* What you get */}
+            <div style={{ background: "#f0fdf4", borderRadius: 12, padding: 14, marginBottom: 16, border: "1px solid #bbf7d0" }}>
+              <div style={{ fontWeight: 700, fontSize: 14, color: "#166534", marginBottom: 8 }}>✅ మీకు వచ్చేది:</div>
+              {["1 PG/Hotel/Apartment/House listing", "Photos + Video upload", "Tenant booking requests", "Direct chat with tenants", "Complaint management", "Listing valid for 1 year"].map(f => (
+                <div key={f} style={{ fontSize: 13, color: "#15803d", padding: "3px 0" }}>✓ {f}</div>
               ))}
             </div>
 
-            {/* Payment section */}
-            <div style={{ marginTop: 12, background: "#f9fafb", borderRadius: 12, padding: 12, border: "1px solid #e5e7eb" }}>
-              <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 10, color: "#111" }}>💳 Pay ₹{plan.price} via UPI</div>
+            {/* UPI Payment */}
+            <div style={{ background: "#f9fafb", borderRadius: 14, padding: 14, border: "1px solid #e5e7eb", marginBottom: 14 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: "#111" }}>💳 ₹199 Pay చేయండి</div>
 
-              {/* QR Code via Google Charts API */}
-              <div style={{ textAlign: "center", marginBottom: 10 }}>
+              {/* QR */}
+              <div style={{ textAlign: "center", marginBottom: 12 }}>
                 <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=${KAILNEST_UPI}%26pn=Kailnest%26am=${plan.price}%26tn=Kailnest+${plan.name}+Plan%26cu=INR`}
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=${KAILNEST_UPI}%26pn=Kailnest%26am=${PRICE}%26tn=Kailnest+Listing+Fee%26cu=INR`}
                   alt="UPI QR"
-                  style={{ width: 130, height: 130, borderRadius: 10, border: "2px solid #e5e7eb" }}
+                  style={{ width: 140, height: 140, borderRadius: 12, border: "2px solid #e5e7eb" }}
                 />
-                <div style={{ fontSize: 11, color: "#6b7280", marginTop: 4 }}>📱 Phone తో scan చేయి</div>
+                <div style={{ fontSize: 11, color: "#6b7280", marginTop: 4 }}>📱 Scan చేయి</div>
               </div>
 
-              {/* UPI ID copy */}
-              <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#fff", borderRadius: 10, padding: "8px 12px", border: "1px solid #e5e7eb" }}>
+              {/* UPI ID */}
+              <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#fff", borderRadius: 10, padding: "10px 12px", border: "1px solid #e5e7eb", marginBottom: 10 }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 10, color: "#9ca3af" }}>UPI ID</div>
-                  <div style={{ fontWeight: 700, fontSize: 13, color: "#111" }}>{KAILNEST_UPI}</div>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>{KAILNEST_UPI}</div>
                 </div>
-                <button onClick={() => copyUPI(plan.name)} style={{
-                  background: copied === plan.name ? "#16a34a" : "#6366f1",
-                  color: "#fff", border: "none", borderRadius: 8,
-                  padding: "6px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer"
-                }}>{copied === plan.name ? "✅ Copied!" : "📋 Copy"}</button>
-              </div>
-              <div style={{ fontSize: 11, color: "#6b7280", marginTop: 6, textAlign: "center" }}>
-                GPay / PhonePe / Paytm / BHIM లో UPI ID enter చేయి
+                <button onClick={copyUPI} style={{
+                  background: copied ? "#16a34a" : "#6366f1", color: "#fff",
+                  border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer"
+                }}>{copied ? "✅ Copied!" : "📋 Copy"}</button>
               </div>
 
-              {/* Mobile app buttons */}
-              <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
-                <a href={`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}&cu=INR`} style={{
-                  flex: 1, textAlign: "center", padding: "8px", background: "#5f259f", color: "#fff",
-                  borderRadius: 8, fontSize: 11, fontWeight: 700, textDecoration: "none"
-                }}>💜 PhonePe</a>
-                <a href={`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}&cu=INR`} style={{
-                  flex: 1, textAlign: "center", padding: "8px", background: "#1a73e8", color: "#fff",
-                  borderRadius: 8, fontSize: 11, fontWeight: 700, textDecoration: "none"
-                }}>🔵 GPay</a>
-                <a href={`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${plan.price}&tn=Kailnest+${plan.name}&cu=INR`} style={{
-                  flex: 1, textAlign: "center", padding: "8px", background: "#00BAF2", color: "#fff",
-                  borderRadius: 8, fontSize: 11, fontWeight: 700, textDecoration: "none"
-                }}>💙 Paytm</a>
+              {/* App links */}
+              <div style={{ display: "flex", gap: 8 }}>
+                <a href={`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${PRICE}&tn=Kailnest+Listing+Fee&cu=INR`} style={{ flex: 1, textAlign: "center", padding: "9px", background: "#5f259f", color: "#fff", borderRadius: 10, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>💜 PhonePe</a>
+                <a href={`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${PRICE}&tn=Kailnest+Listing+Fee&cu=INR`} style={{ flex: 1, textAlign: "center", padding: "9px", background: "#1a73e8", color: "#fff", borderRadius: 10, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>🔵 GPay</a>
+                <a href={`upi://pay?pa=${KAILNEST_UPI}&pn=Kailnest&am=${PRICE}&tn=Kailnest+Listing+Fee&cu=INR`} style={{ flex: 1, textAlign: "center", padding: "9px", background: "#00BAF2", color: "#fff", borderRadius: 10, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>💙 Paytm</a>
               </div>
             </div>
 
-            <div style={{ fontSize: 11, color: "#9ca3af", textAlign: "center", marginTop: 8 }}>
-              Pay చేసిన తర్వాత screenshot పంపు: <strong>7842375842</strong> (WhatsApp)
+            {/* Confirm payment */}
+            <button onClick={handlePaidConfirm} style={{
+              width: "100%", padding: "14px",
+              background: "linear-gradient(135deg, #16a34a, #15803d)",
+              color: "#fff", border: "none", borderRadius: 14,
+              fontSize: 16, fontWeight: 800, cursor: "pointer", marginBottom: 10
+            }}>✅ ₹199 Pay చేశాను — Confirm</button>
+
+            <div style={{ background: "#fffbeb", borderRadius: 10, padding: 10, fontSize: 12, color: "#92400e", border: "1px solid #fde68a", marginBottom: 10 }}>
+              💡 Payment చేసిన తర్వాత confirm నొక్కండి. Verification కోసం screenshot పంపండి: <strong>7842375842</strong> (WhatsApp)
             </div>
-          </div>
-        ))}
 
-        <div style={{ background: "#fffbeb", borderRadius: 10, padding: 10, marginBottom: 10, fontSize: 12, color: "#92400e", border: "1px solid #fde68a" }}>
-          💡 Payment చేసిన తర్వాత screenshot పంపండి: {" "}
-          <strong>kailnest5@gmail.com</strong> లేదా WhatsApp: <strong>7842375842</strong>
-        </div>
-
-        <button onClick={onClose} style={{
-          width: "100%", padding: "12px", background: "#f3f4f6", border: "none",
-          borderRadius: 12, fontSize: 15, cursor: "pointer", fontWeight: 600, marginTop: 4
-        }}>Close</button>
+            <button onClick={onClose} style={{ width: "100%", padding: "12px", background: "#f3f4f6", border: "none", borderRadius: 12, fontSize: 14, cursor: "pointer", fontWeight: 600 }}>Cancel</button>
+          </>
+        )}
       </div>
     </div>
   );
 }
+
 
 // ─── Vacation Notice Modal ────────────────────────────────────────────────────
 function VacationNoticeModal({ booking, onClose, onSubmit }) {
@@ -2606,6 +2595,25 @@ export default function PGFinderApp() {
   const [showSupport, setShowSupport] = useState(false);
   const [showMediaUpload, setShowMediaUpload] = useState(false);
   const [showListingForm, setShowListingForm] = useState(false);
+  const [ownerPlan, setOwnerPlan] = useState(null); // null=no plan, {name, limit, listings}
+  const [ownerListings, setOwnerListings] = useState([]); // owner's own listings
+
+  const PLAN_LIMITS = { Basic: 1, Pro: 5, Premium: 20 };
+
+  const handleAddListing = () => {
+    if (!ownerPlan) {
+      // No subscription — show subscription modal
+      setShowSubscription(true);
+      return;
+    }
+    const limit = PLAN_LIMITS[ownerPlan.name] || 0;
+    if (ownerListings.length >= limit) {
+      alert(`మీ ${ownerPlan.name} plan లో maximum ${limit} listing(s) మాత్రమే add చేయవచ్చు.\n\nMore listings కోసం plan upgrade చేయండి!`);
+      setShowSubscription(true);
+      return;
+    }
+    setShowListingForm(true);
+  };
   const [chatPG, setChatPG] = useState(null);
   const [showAgreement, setShowAgreement] = useState(null);
   const [complaintBooking, setComplaintBooking] = useState(null);
@@ -3035,12 +3043,31 @@ export default function PGFinderApp() {
               ))}
             </div>
 
-            <button onClick={() => setShowListingForm(true)} style={{
+            <button onClick={handleAddListing} style={{
               width: "100%", padding: "14px",
               background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
               color: "#fff", border: "none", borderRadius: 14, fontSize: 15,
               fontWeight: 700, cursor: "pointer", marginBottom: 10
             }}>➕ Add New PG Listing</button>
+
+            {/* Plan status */}
+            {ownerPlan ? (
+              <div style={{ background: "#f0fdf4", borderRadius: 12, padding: 12, marginBottom: 10, border: "1px solid #bbf7d0" }}>
+                <div style={{ fontWeight: 700, color: "#166534", fontSize: 13 }}>✅ {ownerPlan.name} Plan Active</div>
+                <div style={{ fontSize: 12, color: "#16a34a", marginTop: 2 }}>
+                  {ownerListings.length} / {PLAN_LIMITS[ownerPlan.name]} listings used
+                </div>
+                {/* Progress bar */}
+                <div style={{ background: "#dcfce7", borderRadius: 10, height: 6, marginTop: 6 }}>
+                  <div style={{ width: `${(ownerListings.length / PLAN_LIMITS[ownerPlan.name]) * 100}%`, height: "100%", background: "#16a34a", borderRadius: 10 }} />
+                </div>
+              </div>
+            ) : (
+              <div style={{ background: "#fef2f2", borderRadius: 12, padding: 12, marginBottom: 10, border: "1px solid #fecaca" }}>
+                <div style={{ fontWeight: 700, color: "#dc2626", fontSize: 13 }}>❌ No Active Plan</div>
+                <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>Listing add చేయాలంటే subscription కావాలి</div>
+              </div>
+            )}
 
             <button onClick={() => setShowMediaUpload(true)} style={{
               width: "100%", padding: "14px",
@@ -3262,7 +3289,7 @@ export default function PGFinderApp() {
             setBookingPG(null);
           }} />
       )}
-      {showSubscription && <OwnerSubscriptionModal onClose={() => setShowSubscription(false)} />}
+      {showSubscription && <OwnerSubscriptionModal onClose={() => setShowSubscription(false)} onSelectPlan={(plan) => { setOwnerPlan({ name: plan, limit: PLAN_LIMITS[plan] }); setShowSubscription(false); }} />}
       {showSupport && <CustomerSupportModal onClose={() => setShowSupport(false)} />}
       {showTerms && <TermsPrivacyModal type={showTerms} onClose={() => setShowTerms(null)} />}
       {chatPG && <ChatModal pg={chatPG} user={user} onClose={() => setChatPG(null)} />}
@@ -3270,7 +3297,10 @@ export default function PGFinderApp() {
       {showListingForm && (
         <OwnerListingForm
           onClose={() => setShowListingForm(false)}
-          onSave={(listing) => { setShowListingForm(false); }}
+          onSave={(listing) => {
+            setOwnerListings(prev => [...prev, listing]);
+            setShowListingForm(false);
+          }}
           user={user}
         />
       )}
