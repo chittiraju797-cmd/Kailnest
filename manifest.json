@@ -1,15 +1,18 @@
 {
-  "name": "Kailnest - PG, Hotels & Houses",
+  "name": "Kailnest",
   "short_name": "Kailnest",
-  "description": "Find PG, Hotels, Apartments & Houses across India",
-  "start_url": "/Kailnest/",
-  "scope": "/Kailnest/",
+  "description": "Find PG, Hotels, Apartments and Houses across India",
+  "start_url": "https://kailnest.in/",
+  "scope": "https://kailnest.in/",
   "display": "standalone",
   "background_color": "#1e1b4b",
   "theme_color": "#6366f1",
   "orientation": "portrait",
-  "lang": "en",
-  "categories": ["travel", "lifestyle", "utilities"],
+  "lang": "en-IN",
+  "categories": [
+    "travel",
+    "lifestyle"
+  ],
   "icons": [
     {
       "src": "https://raw.githubusercontent.com/chittiraju797-cmd/Kailnest/main/1782926117778.png",
@@ -29,23 +32,8 @@
       "src": "https://raw.githubusercontent.com/chittiraju797-cmd/Kailnest/main/1782926117778.png",
       "sizes": "512x512",
       "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Search PG",
-      "short_name": "Search",
-      "description": "Search for PGs near you",
-      "url": "/Kailnest/?tab=search",
-      "icons": [{ "src": "https://raw.githubusercontent.com/chittiraju797-cmd/Kailnest/main/1782926117778.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "My Bookings",
-      "short_name": "Bookings",
-      "description": "View your bookings",
-      "url": "/Kailnest/?tab=bookings",
-      "icons": [{ "src": "https://raw.githubusercontent.com/chittiraju797-cmd/Kailnest/main/1782926117778.png", "sizes": "96x96" }]
+      "form_factor": "narrow",
+      "label": "Kailnest Home Screen"
     }
   ]
 }
