@@ -13,7 +13,7 @@
   <title>Kailnest — PG · Hotels · Apartments · Houses</title>
 
   <!-- PWA -->
-  <link rel="manifest" href="https://raw.githubusercontent.com/chittiraju797-cmd/Kailnest/main/manifest.json" />
+  <link rel="manifest" href="/manifest.json" />
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/chittiraju797-cmd/Kailnest/main/1782926117778.png" />
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/chittiraju797-cmd/Kailnest/main/1782926117778.png" />
 
@@ -53,22 +53,7 @@
     #dismiss-btn { background: none; border: none; color: #9ca3af; font-size: 18px; cursor: pointer; padding: 4px; }
   </style>
 
-  <script>
-    // Inline manifest fallback for PWA Builder
-    const manifestData = {
-      name: "Kailnest",
-      short_name: "Kailnest", 
-      description: "Find PG, Hotels, Apartments and Houses across India",
-      start_url: "https://kailnest.in/",
-      display: "standalone",
-      background_color: "#1e1b4b",
-      theme_color: "#6366f1",
-      icons: [{src: "https://raw.githubusercontent.com/chittiraju797-cmd/Kailnest/main/1782926117778.png", sizes: "512x512", type: "image/png"}]
-    };
-    const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/manifest+json'});
-    const manifestURL = URL.createObjectURL(blob);
-    document.querySelector('link[rel="manifest"]').href = manifestURL;
-  </script>
+
 </head>
 <body>
   <div id="loading">
