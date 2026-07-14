@@ -1892,4 +1892,1677 @@ function OwnerListingForm({ onClose, onSave, user }) {
           <div style={{ height: "100%", width: `${(step / 3) * 100}%`, background: "linear-gradient(90deg, #6366f1, #8b5cf6)", transition: "width 0.3s" }} />
         </div>
 
-  
+        <div style={{ overflowY: "auto", flex: 1, padding: 20 }}>
+
+          {step === 4 ? (
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <div style={{ fontSize: 60 }}>🎉</div>
+              <div style={{ fontWeight: 800, fontSize: 20, color: "#16a34a", marginTop: 12 }}>Listing Added!</div>
+              <div style={{ color: "#6b7280", fontSize: 14, marginTop: 6 }}>మీ listing review కోసం submit అయింది. Approve అయిన తర్వాత search లో కనిపిస్తుంది.</div>
+            </div>
+          ) : step === 1 ? (
+            <>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#111" }}>📋 Basic Details</div>
+
+              <label style={labelStyle}>Property Name *</label>
+              <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="ఉదా: Sri Sai PG for Boys" style={inputStyle} />
+
+              <label style={labelStyle}>Category *</label>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
+                {["PG", "Hotel", "Apartment", "House"].map(c => (
+                  <button key={c} onClick={() => setForm({...form, category: c})} style={{
+                    padding: "10px", borderRadius: 10, border: form.category === c ? "2px solid #6366f1" : "1.5px solid #e5e7eb",
+                    background: form.category === c ? "#eff6ff" : "#f9fafb",
+                    color: form.category === c ? "#6366f1" : "#374151", fontWeight: 700, cursor: "pointer", fontSize: 13
+                  }}>
+                    {c === "PG" ? "🛏️" : c === "Hotel" ? "🏨" : c === "Apartment" ? "🏢" : "🏠"} {c}
+                  </button>
+                ))}
+              </div>
+
+              <label style={labelStyle}>For Whom *</label>
+              <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+                {["Boys", "Girls", "Co-ed", "Family"].map(t => (
+                  <button key={t} onClick={() => setForm({...form, type: t})} style={{
+                    flex: 1, padding: "8px", borderRadius: 10, fontSize: 12, fontWeight: 600,
+                    border: form.type === t ? "2px solid #6366f1" : "1px solid #e5e7eb",
+                    background: form.type === t ? "#eff6ff" : "#f9fafb",
+                    color: form.type === t ? "#6366f1" : "#374151", cursor: "pointer"
+                  }}>{t === "Boys" ? "👨" : t === "Girls" ? "👩" : t === "Co-ed" ? "👥" : "👨‍👩‍👧"} {t}</button>
+                ))}
+              </div>
+
+              <label style={labelStyle}>Location / Address *</label>
+              <input value={form.location} onChange={e => setForm({...form, location: e.target.value})} placeholder="ఉదా: Dilsukhnagar, Hyderabad" style={inputStyle} />
+
+              <label style={labelStyle}>City *</label>
+              <input value={form.city} onChange={e => setForm({...form, city: e.target.value})} placeholder="ఉదా: Hyderabad" style={inputStyle} />
+
+              <label style={labelStyle}>Nearby Landmark</label>
+              <input value={form.nearBy} onChange={e => setForm({...form, nearBy: e.target.value})} placeholder="ఉదా: Osmania University 1km" style={inputStyle} />
+            </>
+          ) : step === 2 ? (
+            <>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#111" }}>💰 Pricing & Amenities</div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
+                <div>
+                  <label style={labelStyle}>Rent/month *</label>
+                  <input value={form.price} onChange={e => setForm({...form, price: e.target.value})} placeholder="₹5000" type="number" style={{...inputStyle, marginBottom: 0}} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Deposit</label>
+                  <input value={form.deposit} onChange={e => setForm({...form, deposit: e.target.value})} placeholder="₹10000" type="number" style={{...inputStyle, marginBottom: 0}} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Total Beds</label>
+                  <input value={form.total} onChange={e => setForm({...form, total: e.target.value})} placeholder="10" type="number" style={{...inputStyle, marginBottom: 0}} />
+                </div>
+              </div>
+
+              <label style={{...labelStyle, marginTop: 12}}>Amenities</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+                {ALL_AMENITIES.map(a => (
+                  <button key={a} onClick={() => toggleAmenity(a)} style={{
+                    padding: "6px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                    border: form.amenities.includes(a) ? "2px solid #6366f1" : "1px solid #e5e7eb",
+                    background: form.amenities.includes(a) ? "#eff6ff" : "#f9fafb",
+                    color: form.amenities.includes(a) ? "#6366f1" : "#374151"
+                  }}>{a}</button>
+                ))}
+              </div>
+
+              <label style={labelStyle}>Description</label>
+              <textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})}
+                placeholder="మీ property గురించి వివరంగా రాయండి..." rows={3}
+                style={{...inputStyle, resize: "none"}} />
+
+              <label style={labelStyle}>Rules & Conditions</label>
+              <textarea value={form.conditions} onChange={e => setForm({...form, conditions: e.target.value})}
+                placeholder="ఉదా: No late entry after 11PM. 2 months notice required." rows={2}
+                style={{...inputStyle, resize: "none"}} />
+
+              <label style={labelStyle}>Your UPI ID (for tenant payments)</label>
+              <input value={form.ownerUpi} onChange={e => setForm({...form, ownerUpi: e.target.value})}
+                placeholder="yourname@ybl" style={inputStyle} />
+            </>
+          ) : step === 3 ? (
+            <>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8, color: "#111" }}>📸 Photos</div>
+              <div style={{ fontSize: 13, color: "#6b7280", marginBottom: 16 }}>Good photos get 3x more enquiries!</div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
+                {photos.map((p, i) => (
+                  <div key={i} style={{ position: "relative", borderRadius: 10, overflow: "hidden", height: 80 }}>
+                    <img src={p.previewUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <button onClick={() => setPhotos(prev => prev.filter((_, idx) => idx !== i))} style={{
+                      position: "absolute", top: 2, right: 2, background: "rgba(0,0,0,0.6)",
+                      color: "#fff", border: "none", borderRadius: "50%", width: 20, height: 20, fontSize: 11, cursor: "pointer"
+                    }}>✕</button>
+                  </div>
+                ))}
+                {photos.length < 8 && (
+                  <label style={{ height: 80, borderRadius: 10, border: "2px dashed #c7d2fe", background: "#f5f3ff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#6366f1" }}>
+                    <span style={{ fontSize: 24 }}>📷</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, marginTop: 2 }}>Add</span>
+                    <input type="file" accept="image/*" multiple onChange={e => {
+                      const files = Array.from(e.target.files).slice(0, 8 - photos.length);
+                      setPhotos(prev => [...prev, ...files.map(f => ({ file: f, previewUrl: URL.createObjectURL(f) }))]);
+                    }} style={{ display: "none" }} />
+                  </label>
+                )}
+              </div>
+
+              <div style={{ background: "#eff6ff", borderRadius: 12, padding: 12, fontSize: 12, color: "#1e40af" }}>
+                📌 First photo = cover photo in search results
+              </div>
+            </>
+          ) : null}
+        </div>
+
+        {/* Bottom buttons */}
+        {step < 4 && (
+          <div style={{ padding: "12px 20px 24px", borderTop: "1px solid #f3f4f6", display: "flex", gap: 10 }}>
+            {step > 1 && (
+              <button onClick={() => setStep(step - 1)} style={{ flex: 1, padding: "12px", background: "#f3f4f6", border: "none", borderRadius: 12, fontSize: 14, cursor: "pointer", fontWeight: 600 }}>← Back</button>
+            )}
+            {step < 3 ? (
+              <button onClick={() => setStep(step + 1)} disabled={step === 1 && (!form.name || !form.location || !form.city)} style={{
+                flex: 2, padding: "12px",
+                background: (step === 1 && (!form.name || !form.location || !form.city)) ? "#d1d5db" : "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                color: "#fff", border: "none", borderRadius: 12, fontSize: 14, cursor: "pointer", fontWeight: 700
+              }}>Next →</button>
+            ) : (
+              <button onClick={handleSave} disabled={saving} style={{
+                flex: 2, padding: "12px", background: saving ? "#d1d5db" : "linear-gradient(135deg, #16a34a, #15803d)",
+                color: "#fff", border: "none", borderRadius: 12, fontSize: 14, cursor: "pointer", fontWeight: 700
+              }}>{saving ? "Saving..." : "✅ Submit Listing"}</button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+const SUPPORT_NUMBER = "7842375842";
+const SUPPORT_WHATSAPP = "7842375842";
+const SUPPORT_EMAIL = "kailnest5@gmail.com";
+
+function CustomerSupportModal({ onClose }) {
+  const [chatOpen, setChatOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { from: "support", text: "నమస్కారం! Kailnest Support కి స్వాగతం 🙏 మీకు ఎలా help చేయాలి?", time: "10:00 AM" }
+  ]);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+
+  const AUTO_REPLIES = {
+    "booking": "మీ booking గురించి details చెప్పండి, మేము immediately help చేస్తాం! 📋",
+    "payment": "Payment issue ఉంటే మీ transaction ID share చేయండి. 24hrs లో resolve చేస్తాం. 💳",
+    "refund": "Refund process 5-7 working days తీసుకుంటుంది. మీ booking ID ఇవ్వండి. 💰",
+    "vacate": "Vacation notice గురించి help కావాలా? Bookings tab లో 'Vacation Notice' button use చేయండి. 🏃",
+    "owner": "Owner contact issue ఉంటే మేము directly mediate చేస్తాం. Owner name చెప్పండి. 👤",
+    "default": "మీ query note చేశాం. Support team 30 minutes లో contact చేస్తారు. 🕐"
+  };
+
+  const sendMessage = () => {
+    if (!input.trim()) return;
+    const userMsg = { from: "user", text: input, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) };
+    setMessages(prev => [...prev, userMsg]);
+    setInput("");
+    setTyping(true);
+    setTimeout(() => {
+      const lower = input.toLowerCase();
+      const key = Object.keys(AUTO_REPLIES).find(k => lower.includes(k)) || "default";
+      setMessages(prev => [...prev, { from: "support", text: AUTO_REPLIES[key], time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }]);
+      setTyping(false);
+    }, 1200);
+  };
+
+  const FAQS = [
+    { q: "Booking cancel చేయాలి", k: "booking" },
+    { q: "Payment issue", k: "payment" },
+    { q: "Refund status", k: "refund" },
+    { q: "Vacation notice", k: "vacate" },
+    { q: "Owner contact problem", k: "owner" },
+  ];
+
+  const quickSend = (text) => {
+    setInput(text);
+    setTimeout(() => {
+      const userMsg = { from: "user", text, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) };
+      setMessages(prev => [...prev, userMsg]);
+      setTyping(true);
+      setTimeout(() => {
+        const lower = text.toLowerCase();
+        const key = Object.keys(AUTO_REPLIES).find(k => lower.includes(k)) || "default";
+        setMessages(prev => [...prev, { from: "support", text: AUTO_REPLIES[key], time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }]);
+        setTyping(false);
+      }, 1000);
+      setInput("");
+    }, 100);
+  };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "flex-end", zIndex: 1000 }}>
+      <div style={{ background: "#fff", borderRadius: "22px 22px 0 0", width: "100%", maxHeight: "92vh", display: "flex", flexDirection: "column" }}>
+
+        {/* Header */}
+        <div style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", borderRadius: "22px 22px 0 0", padding: "16px 20px", color: "#fff" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>🎧</div>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: 16 }}>Customer Support</div>
+                <div style={{ fontSize: 11, opacity: 0.85 }}>● Online · Avg reply: 5 min</div>
+              </div>
+            </div>
+            <button onClick={onClose} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>✕ Close</button>
+          </div>
+        </div>
+
+        <div style={{ overflowY: "auto", flex: 1, padding: 16 }}>
+
+          {!chatOpen ? (
+            <>
+              {/* Contact Options */}
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 12, color: "#111" }}>మాతో contact చేయండి</div>
+
+              {/* Voice Call */}
+              <a href={`tel:${SUPPORT_NUMBER}`} style={{ textDecoration: "none" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, background: "#f0fdf4", borderRadius: 14, padding: "14px 16px", marginBottom: 10, border: "1.5px solid #bbf7d0", cursor: "pointer" }}>
+                  <div style={{ width: 46, height: 46, borderRadius: "50%", background: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>📞</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: "#15803d" }}>Voice Call</div>
+                    <div style={{ fontSize: 12, color: "#6b7280" }}>Mon–Sat · 9AM–8PM</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#16a34a" }}>{SUPPORT_NUMBER}</div>
+                  </div>
+                  <div style={{ fontSize: 20, color: "#16a34a" }}>›</div>
+                </div>
+              </a>
+
+              {/* WhatsApp */}
+              <a href={`https://wa.me/91${SUPPORT_WHATSAPP}?text=Hello%20Kailnest%20Support%2C%20I%20need%20help%20with%20my%20booking.`} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, background: "#f0fdf4", borderRadius: 14, padding: "14px 16px", marginBottom: 10, border: "1.5px solid #bbf7d0", cursor: "pointer" }}>
+                  <div style={{ width: 46, height: 46, borderRadius: "50%", background: "#25D366", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>💬</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: "#15803d" }}>WhatsApp Chat</div>
+                    <div style={{ fontSize: 12, color: "#6b7280" }}>24/7 Available · Quick replies</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#25D366" }}>wa.me/91{SUPPORT_WHATSAPP}</div>
+                  </div>
+                  <div style={{ fontSize: 20, color: "#25D366" }}>›</div>
+                </div>
+              </a>
+
+              {/* In-App Chat */}
+              <div onClick={() => setChatOpen(true)} style={{ display: "flex", alignItems: "center", gap: 14, background: "#eff6ff", borderRadius: 14, padding: "14px 16px", marginBottom: 10, border: "1.5px solid #bfdbfe", cursor: "pointer" }}>
+                <div style={{ width: 46, height: 46, borderRadius: "50%", background: "#6366f1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>💭</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: "#4338ca" }}>In-App Chat</div>
+                  <div style={{ fontSize: 12, color: "#6b7280" }}>Chat with support agent now</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#6366f1" }}>Tap to open chat →</div>
+                </div>
+                <div style={{ fontSize: 20, color: "#6366f1" }}>›</div>
+              </div>
+
+              {/* Email */}
+              <a href={`mailto:${SUPPORT_EMAIL}?subject=Kailnest Support`} style={{ textDecoration: "none" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, background: "#faf5ff", borderRadius: 14, padding: "14px 16px", marginBottom: 16, border: "1.5px solid #e9d5ff", cursor: "pointer" }}>
+                  <div style={{ width: 46, height: 46, borderRadius: "50%", background: "#9333ea", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>📧</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: "#7e22ce" }}>Email Support</div>
+                    <div style={{ fontSize: 12, color: "#6b7280" }}>Reply within 24 hours</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#9333ea" }}>{SUPPORT_EMAIL}</div>
+                  </div>
+                  <div style={{ fontSize: 20, color: "#9333ea" }}>›</div>
+                </div>
+              </a>
+
+              {/* Timings */}
+              <div style={{ background: "#f9fafb", borderRadius: 12, padding: 14, border: "1px solid #f3f4f6", marginBottom: 10 }}>
+                <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 8 }}>🕐 Support Timings</div>
+                {[
+                  { channel: "📞 Voice Call", time: "Mon–Sat · 9AM–8PM" },
+                  { channel: "💬 WhatsApp", time: "24/7 Available" },
+                  { channel: "💭 In-App Chat", time: "Mon–Sun · 8AM–10PM" },
+                  { channel: "📧 Email", time: "Reply in 24 hrs" },
+                ].map(r => (
+                  <div key={r.channel} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontSize: 13, borderBottom: "1px solid #f3f4f6" }}>
+                    <span>{r.channel}</span>
+                    <span style={{ color: "#6b7280" }}>{r.time}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Chat Header */}
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+                <button onClick={() => setChatOpen(false)} style={{ background: "#f3f4f6", border: "none", borderRadius: 8, padding: "5px 10px", cursor: "pointer", fontSize: 13 }}>← Back</button>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>💭 Live Chat Support</div>
+              </div>
+
+              {/* Chat Messages */}
+              <div style={{ marginBottom: 10 }}>
+                {messages.map((m, i) => (
+                  <div key={i} style={{ display: "flex", flexDirection: m.from === "user" ? "row-reverse" : "row", marginBottom: 10, alignItems: "flex-end", gap: 6 }}>
+                    {m.from === "support" && (
+                      <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#6366f1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>🎧</div>
+                    )}
+                    <div style={{
+                      maxWidth: "75%", padding: "10px 13px", borderRadius: m.from === "user" ? "14px 14px 4px 14px" : "14px 14px 14px 4px",
+                      background: m.from === "user" ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "#f3f4f6",
+                      color: m.from === "user" ? "#fff" : "#111", fontSize: 13, lineHeight: 1.5
+                    }}>
+                      {m.text}
+                      <div style={{ fontSize: 10, opacity: 0.65, marginTop: 3, textAlign: "right" }}>{m.time}</div>
+                    </div>
+                  </div>
+                ))}
+                {typing && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#6366f1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>🎧</div>
+                    <div style={{ background: "#f3f4f6", padding: "10px 14px", borderRadius: "14px 14px 14px 4px", fontSize: 13, color: "#6b7280" }}>typing...</div>
+                  </div>
+                )}
+              </div>
+
+              {/* Quick FAQ Buttons */}
+              <div style={{ marginBottom: 10 }}>
+                <div style={{ fontSize: 11, color: "#9ca3af", marginBottom: 6, fontWeight: 600 }}>QUICK QUESTIONS</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {FAQS.map(f => (
+                    <button key={f.q} onClick={() => quickSend(f.q)} style={{ background: "#eff6ff", color: "#4338ca", border: "1px solid #bfdbfe", borderRadius: 20, padding: "5px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>{f.q}</button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Chat Input — only show when chat is open */}
+        {chatOpen && (
+          <div style={{ padding: "10px 16px 24px", borderTop: "1px solid #f3f4f6", display: "flex", gap: 8, background: "#fff" }}>
+            <input
+              value={input} onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && sendMessage()}
+              placeholder="మీ message type చేయండి..."
+              style={{ flex: 1, padding: "10px 14px", borderRadius: 24, border: "1.5px solid #e5e7eb", fontSize: 13, outline: "none" }}
+            />
+            <button onClick={sendMessage} style={{ width: 42, height: 42, borderRadius: "50%", background: "linear-gradient(135deg, #6366f1, #8b5cf6)", border: "none", color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>➤</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Owner Media Upload Modal ──────────────────────────────────────────────────
+function OwnerMediaUploadModal({ onClose, onSave }) {
+  const [photos, setPhotos] = useState([]); // array of {file, previewUrl}
+  const [video, setVideo] = useState(null); // {file, previewUrl}
+  const [uploading, setUploading] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const handlePhotoSelect = (e) => {
+    const files = Array.from(e.target.files).slice(0, 8 - photos.length);
+    const newPhotos = files.map(f => ({ file: f, previewUrl: URL.createObjectURL(f) }));
+    setPhotos(prev => [...prev, ...newPhotos]);
+  };
+
+  const handleVideoSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) setVideo({ file, previewUrl: URL.createObjectURL(file) });
+  };
+
+  const removePhoto = (i) => setPhotos(prev => prev.filter((_, idx) => idx !== i));
+
+  const handleUpload = () => {
+    setUploading(true);
+    setTimeout(() => {
+      setUploading(false);
+      setDone(true);
+      setTimeout(() => { onSave({ photos, video }); onClose(); }, 1500);
+    }, 1800);
+  };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "flex-end", zIndex: 1000 }}>
+      <div style={{ background: "#fff", borderRadius: "22px 22px 0 0", width: "100%", padding: 20, maxHeight: "90vh", overflowY: "auto" }}>
+
+        {done ? (
+          <div style={{ textAlign: "center", padding: "30px 0" }}>
+            <div style={{ fontSize: 60, marginBottom: 12 }}>✅</div>
+            <div style={{ fontWeight: 800, fontSize: 19, color: "#16a34a" }}>Media Uploaded!</div>
+            <div style={{ color: "#6b7280", fontSize: 13, marginTop: 6 }}>{photos.length} photos{video ? " + 1 video" : ""} added to listing.</div>
+          </div>
+        ) : uploading ? (
+          <div style={{ textAlign: "center", padding: "40px 0" }}>
+            <div style={{ fontSize: 40, marginBottom: 14 }}>⏳</div>
+            <div style={{ fontWeight: 700, fontSize: 15, color: "#6366f1" }}>Uploading to server...</div>
+            <div style={{ background: "#f3f4f6", borderRadius: 20, height: 8, marginTop: 16, overflow: "hidden" }}>
+              <div style={{ width: "70%", height: "100%", background: "linear-gradient(90deg, #6366f1, #8b5cf6)", borderRadius: 20 }} />
+            </div>
+          </div>
+        ) : (
+          <>
+            <div style={{ fontWeight: 800, fontSize: 17, marginBottom: 4 }}>📸 Add Photos & Video</div>
+            <div style={{ color: "#6b7280", fontSize: 13, marginBottom: 16 }}>Good photos get 3x more enquiries</div>
+
+            {/* Photo grid */}
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#374151", marginBottom: 8 }}>Photos ({photos.length}/8)</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
+              {photos.map((p, i) => (
+                <div key={i} style={{ position: "relative", borderRadius: 10, overflow: "hidden", height: 70 }}>
+                  <img src={p.previewUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <button onClick={() => removePhoto(i)} style={{
+                    position: "absolute", top: 2, right: 2, background: "rgba(0,0,0,0.6)",
+                    color: "#fff", border: "none", borderRadius: "50%", width: 20, height: 20,
+                    fontSize: 11, cursor: "pointer", lineHeight: 1
+                  }}>✕</button>
+                  {i === 0 && (
+                    <div style={{ position: "absolute", bottom: 2, left: 2, background: "#6366f1", color: "#fff", fontSize: 9, fontWeight: 700, borderRadius: 5, padding: "1px 5px" }}>COVER</div>
+                  )}
+                </div>
+              ))}
+              {photos.length < 8 && (
+                <label style={{
+                  height: 70, borderRadius: 10, border: "2px dashed #c7d2fe",
+                  background: "#f5f3ff", display: "flex", flexDirection: "column",
+                  alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#6366f1"
+                }}>
+                  <span style={{ fontSize: 22 }}>📷</span>
+                  <span style={{ fontSize: 9, fontWeight: 700, marginTop: 2 }}>Add</span>
+                  <input type="file" accept="image/*" multiple onChange={handlePhotoSelect} style={{ display: "none" }} />
+                </label>
+              )}
+            </div>
+            <div style={{ fontSize: 11, color: "#9ca3af", marginBottom: 16 }}>📌 First photo = cover photo shown in search results</div>
+
+            {/* Video */}
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#374151", marginBottom: 8 }}>PG Video Tour (optional)</div>
+            {video ? (
+              <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", marginBottom: 16 }}>
+                <video src={video.previewUrl} style={{ width: "100%", maxHeight: 160, objectFit: "cover" }} controls />
+                <button onClick={() => setVideo(null)} style={{
+                  position: "absolute", top: 6, right: 6, background: "rgba(0,0,0,0.6)",
+                  color: "#fff", border: "none", borderRadius: "50%", width: 26, height: 26,
+                  fontSize: 13, cursor: "pointer"
+                }}>✕</button>
+              </div>
+            ) : (
+              <label style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                height: 60, borderRadius: 12, border: "2px dashed #c7d2fe",
+                background: "#f5f3ff", cursor: "pointer", color: "#6366f1", marginBottom: 16, fontWeight: 600, fontSize: 13
+              }}>
+                🎬 Upload PG Video Tour (max 60 sec)
+                <input type="file" accept="video/*" onChange={handleVideoSelect} style={{ display: "none" }} />
+              </label>
+            )}
+
+            <div style={{ background: "#eff6ff", borderRadius: 10, padding: 10, marginBottom: 16, fontSize: 12, color: "#1e40af", border: "1px solid #bfdbfe" }}>
+              💡 Tip: Room, bathroom, kitchen, entrance photos + 1 walkthrough video పెడితే bookings fast అవుతాయి.
+            </div>
+
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={onClose} style={{
+                flex: 1, padding: "12px", background: "#f3f4f6", border: "none",
+                borderRadius: 12, fontSize: 14, cursor: "pointer", fontWeight: 600
+              }}>Cancel</button>
+              <button onClick={handleUpload} disabled={photos.length === 0} style={{
+                flex: 2, padding: "12px",
+                background: photos.length > 0 ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "#d1d5db",
+                color: "#fff", border: "none", borderRadius: 12, fontSize: 14,
+                cursor: photos.length > 0 ? "pointer" : "not-allowed", fontWeight: 700
+              }}>Upload {photos.length} Photo{photos.length !== 1 ? "s" : ""}{video ? " + Video" : ""}</button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Complaint System ──────────────────────────────────────────────────────────
+// PRIVACY RULE: A complaint is tagged with pgId + ownerId + tenantId.
+// - Tenant sees ONLY their own complaints.
+// - Owner sees ONLY complaints for THEIR OWN PG (never other owners' complaints, never other tenants' complaints).
+// - Auto-reminder fires to the owner every 24hrs until status = "resolved".
+
+const COMPLAINT_CATEGORIES = ["Water issue", "Electricity", "Food quality", "Cleanliness", "Noise/Safety", "Maintenance", "Owner behaviour", "Other"];
+
+function ComplaintModal({ booking, onClose, onSubmit }) {
+  const [category, setCategory] = useState("");
+  const [desc, setDesc] = useState("");
+  const [step, setStep] = useState(1);
+
+  const handleSubmit = () => {
+    const complaint = {
+      id: "C" + Date.now(),
+      pgId: booking.id,
+      pgName: booking.name,
+      ownerId: booking.owner,
+      ownerPhone: booking.phone,
+      tenantName: "You", // in real app: logged-in tenant name
+      category,
+      desc,
+      status: "open", // open -> resolved
+      createdAt: new Date().toISOString(),
+      lastReminderAt: new Date().toISOString(),
+      reminderCount: 1,
+    };
+    setStep(2);
+    setTimeout(() => { onSubmit(complaint); onClose(); }, 1600);
+  };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "flex-end", zIndex: 1000 }}>
+      <div style={{ background: "#fff", borderRadius: "22px 22px 0 0", width: "100%", padding: 20, maxHeight: "90vh", overflowY: "auto" }}>
+        {step === 1 ? (
+          <>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+              <div style={{ fontSize: 26 }}>📢</div>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: 17 }}>Raise a Complaint</div>
+                <div style={{ fontSize: 12, color: "#6b7280" }}>{booking.name}</div>
+              </div>
+            </div>
+
+            <div style={{ background: "#eff6ff", borderRadius: 10, padding: 10, marginTop: 12, marginBottom: 16, fontSize: 12, color: "#1e40af", border: "1px solid #bfdbfe" }}>
+              🔒 ఈ complaint మీ PG owner కి మాత్రమే కనిపిస్తుంది. ఇతర tenants ఎవరూ చూడలేరు.
+            </div>
+
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 13, fontWeight: 700, color: "#374151", display: "block", marginBottom: 8 }}>Category</label>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {COMPLAINT_CATEGORIES.map(c => (
+                  <button key={c} onClick={() => setCategory(c)} style={{
+                    padding: "9px", borderRadius: 10, fontSize: 12, fontWeight: 600,
+                    border: category === c ? "2px solid #ef4444" : "1px solid #e5e7eb",
+                    background: category === c ? "#fef2f2" : "#f9fafb",
+                    color: category === c ? "#dc2626" : "#374151", cursor: "pointer"
+                  }}>{c}</button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontSize: 13, fontWeight: 700, color: "#374151", display: "block", marginBottom: 6 }}>Describe the issue</label>
+              <textarea
+                value={desc} onChange={e => setDesc(e.target.value)}
+                placeholder="Detail గా రాయండి... (ఉదా: 2 రోజులుగా water రావడం లేదు)"
+                rows={4}
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1px solid #e5e7eb", fontSize: 13, boxSizing: "border-box", resize: "none", fontFamily: "inherit" }}
+              />
+            </div>
+
+            <div style={{ background: "#fffbeb", borderRadius: 10, padding: 10, marginBottom: 16, fontSize: 12, color: "#92400e", border: "1px solid #fde68a" }}>
+              🔔 Owner reply ఇచ్చి "Resolved" mark చేసేవరకు automatic reminder messages పంపుతాం (24hrs కి ఒకటి).
+            </div>
+
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={onClose} style={{ flex: 1, padding: "12px", background: "#f3f4f6", border: "none", borderRadius: 12, fontSize: 14, cursor: "pointer", fontWeight: 600 }}>Cancel</button>
+              <button onClick={handleSubmit} disabled={!category || !desc.trim()} style={{
+                flex: 2, padding: "12px",
+                background: category && desc.trim() ? "linear-gradient(135deg, #ef4444, #dc2626)" : "#d1d5db",
+                color: "#fff", border: "none", borderRadius: 12, fontSize: 14,
+                cursor: category && desc.trim() ? "pointer" : "not-allowed", fontWeight: 700
+              }}>📢 Submit Complaint</button>
+            </div>
+          </>
+        ) : (
+          <div style={{ textAlign: "center", padding: "30px 0" }}>
+            <div style={{ fontSize: 60, marginBottom: 12 }}>✅</div>
+            <div style={{ fontWeight: 800, fontSize: 19, color: "#16a34a" }}>Complaint Sent!</div>
+            <div style={{ color: "#6b7280", fontSize: 13, marginTop: 6 }}>Owner కి notification వెళ్ళింది. Resolve అయ్యేవరకు reminders పంపుతాం.</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Owner side: shows ONLY complaints where complaint.ownerId === current owner's name/id.
+// This filtering is the privacy boundary — owners never see other owners' or other tenants' complaints.
+function OwnerComplaintsView({ complaints, currentOwnerId, onResolve, onClose }) {
+  const myComplaints = complaints.filter(c => c.ownerId === currentOwnerId);
+  const open = myComplaints.filter(c => c.status === "open");
+  const resolved = myComplaints.filter(c => c.status === "resolved");
+
+  const daysAgo = (iso) => Math.floor((Date.now() - new Date(iso)) / (1000 * 60 * 60 * 24));
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "flex-end", zIndex: 1000 }}>
+      <div style={{ background: "#fff", borderRadius: "22px 22px 0 0", width: "100%", maxHeight: "90vh", display: "flex", flexDirection: "column" }}>
+        <div style={{ background: "linear-gradient(135deg, #ef4444, #f59e0b)", borderRadius: "22px 22px 0 0", padding: "16px 20px", color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: 16 }}>📢 My PG Complaints</div>
+            <div style={{ fontSize: 11, opacity: 0.9 }}>Only your PG's complaints shown here · {open.length} open</div>
+          </div>
+          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>✕</button>
+        </div>
+
+        <div style={{ overflowY: "auto", padding: 16, flex: 1 }}>
+          {myComplaints.length === 0 ? (
+            <div style={{ textAlign: "center", padding: 30, color: "#9ca3af" }}>
+              <div style={{ fontSize: 40 }}>✅</div>
+              <div style={{ fontSize: 14, marginTop: 8 }}>No complaints. All good!</div>
+            </div>
+          ) : (
+            <>
+              {open.length > 0 && (
+                <>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: "#dc2626", marginBottom: 8 }}>🔴 OPEN ({open.length})</div>
+                  {open.map(c => (
+                    <div key={c.id} style={{ background: "#fef2f2", borderRadius: 14, padding: 14, marginBottom: 10, border: "1.5px solid #fecaca" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span style={{ fontWeight: 700, fontSize: 13, color: "#991b1b" }}>{c.category}</span>
+                        <span style={{ fontSize: 11, color: "#9ca3af" }}>{daysAgo(c.createdAt)}d ago</span>
+                      </div>
+                      <div style={{ fontSize: 13, color: "#374151", marginTop: 6, lineHeight: 1.5 }}>{c.desc}</div>
+                      <div style={{ fontSize: 11, color: "#dc2626", marginTop: 8, fontWeight: 600 }}>
+                        🔔 Reminder sent {c.reminderCount}x · PG: {c.pgName}
+                      </div>
+                      <button onClick={() => onResolve(c.id)} style={{
+                        width: "100%", marginTop: 10, padding: "9px",
+                        background: "linear-gradient(135deg, #16a34a, #15803d)", color: "#fff",
+                        border: "none", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer"
+                      }}>✅ Mark as Resolved</button>
+                    </div>
+                  ))}
+                </>
+              )}
+              {resolved.length > 0 && (
+                <>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: "#16a34a", marginBottom: 8, marginTop: 16 }}>✅ RESOLVED ({resolved.length})</div>
+                  {resolved.map(c => (
+                    <div key={c.id} style={{ background: "#f0fdf4", borderRadius: 14, padding: 14, marginBottom: 10, border: "1px solid #bbf7d0", opacity: 0.8 }}>
+                      <span style={{ fontWeight: 700, fontSize: 13, color: "#166534" }}>{c.category}</span>
+                      <div style={{ fontSize: 13, color: "#374151", marginTop: 6 }}>{c.desc}</div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+const HOTELS = [
+  { id: 101, name: "Sri Venkateswara Lodge", owner: "Prasad Rao", phone: "9811122233", location: "Tirupati, AP", nearBy: "Bus stand 0.3km", type: "Standard", rating: 4.1, reviews: 87, price: 800, deposit: 0, available: 5, total: 20, photos: ["🏨"], photoUrls: ["https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600"], videoUrl: "", amenities: ["WiFi", "AC", "Room Service", "Parking", "CCTV"], conditions: "Check-in 12PM, Check-out 11AM.", verified: true, featured: true, description: "Budget hotel near Tirupati bus stand.", category: "Hotel" },
+  { id: 102, name: "Kadapa Grand Inn", owner: "Suresh Babu", phone: "9922334455", location: "Kadapa, AP", nearBy: "Railway station 1km", type: "Deluxe", rating: 3.8, reviews: 34, price: 1200, deposit: 0, available: 3, total: 15, photos: ["🏨"], photoUrls: ["https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600"], videoUrl: "", amenities: ["WiFi", "AC", "Restaurant", "Power Backup"], conditions: "Valid ID mandatory at check-in.", verified: false, featured: false, description: "Comfortable stay in heart of Kadapa.", category: "Hotel" },
+];
+
+const APARTMENTS = [
+  { id: 201, name: "Green View Apartments", owner: "Lakshmi Reddy", phone: "9700011122", location: "Gachibowli, Hyderabad", nearBy: "Hitech City 2km", type: "2BHK", rating: 4.5, reviews: 19, price: 18000, deposit: 36000, available: 2, total: 8, photos: ["🏢"], photoUrls: ["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600"], videoUrl: "", amenities: ["WiFi", "AC", "Gym", "Security", "Parking", "Power Backup"], conditions: "11-month agreement mandatory. 2 months notice.", verified: true, featured: true, description: "Modern 2BHK flats for IT professionals.", category: "Apartment" },
+  { id: 202, name: "Sai Residency", owner: "Ramu Chowdary", phone: "9600022233", location: "Vijayawada, AP", nearBy: "MG Road 0.5km", type: "1BHK", rating: 4.0, reviews: 11, price: 8000, deposit: 16000, available: 1, total: 6, photos: ["🏢"], photoUrls: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600"], videoUrl: "", amenities: ["WiFi", "Security", "Parking"], conditions: "Families preferred. 1 month notice.", verified: false, featured: false, description: "Affordable 1BHK in prime location.", category: "Apartment" },
+];
+
+const HOUSES = [
+  { id: 301, name: "Independent House - Porumamilla", owner: "Krishna Murthy", phone: "9500033344", location: "Porumamilla, Kadapa", nearBy: "Town center 0.8km", type: "3BHK", rating: 4.2, reviews: 7, price: 6000, deposit: 12000, available: 1, total: 1, photos: ["🏠"], photoUrls: ["https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600"], videoUrl: "", amenities: ["Parking", "Garden", "Borewell", "Solar Power"], conditions: "Family only. 2 months notice required.", verified: true, featured: false, description: "Spacious 3BHK independent house with garden.", category: "House" },
+  { id: 302, name: "Corner House - Nandyal", owner: "Venkat Rao", phone: "9400044455", location: "Nandyal, AP", nearBy: "Market 1km", type: "2BHK", rating: 3.9, reviews: 5, price: 4500, deposit: 9000, available: 1, total: 1, photos: ["🏠"], photoUrls: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600"], videoUrl: "", amenities: ["Parking", "Borewell", "Power Backup"], conditions: "No pets. 1 month notice.", verified: false, featured: false, description: "Good 2BHK house in calm neighborhood.", category: "House" },
+];
+
+const INDIA_CITIES = {
+  "Andhra Pradesh": ["Hyderabad", "Vijayawada", "Visakhapatnam", "Tirupati", "Kadapa", "Nellore", "Guntur", "Kurnool", "Porumamilla"],
+  "Karnataka": ["Bangalore", "Mysore", "Mangalore", "Hubli"],
+  "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Salem"],
+  "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik"],
+  "Delhi": ["New Delhi", "Noida", "Gurgaon", "Faridabad"],
+  "West Bengal": ["Kolkata", "Howrah", "Durgapur"],
+  "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur"],
+  "Gujarat": ["Ahmedabad", "Surat", "Vadodara"],
+  "Uttar Pradesh": ["Lucknow", "Kanpur", "Varanasi", "Agra"],
+  "Telangana": ["Hyderabad", "Warangal", "Karimnagar"],
+};
+
+// India-wide extra listings (added to existing AP listings)
+const EXTRA_PGS = [
+  { id: 11, name: "Bangalore Boys PG", owner: "Mohan Das", phone: "9811100001", location: "Koramangala, Bangalore", nearBy: "Forum Mall 0.5km", type: "Boys", rating: 4.4, reviews: 62, price: 7000, deposit: 14000, available: 4, total: 12, photos: ["🛏️"], photoUrls: ["https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600"], videoUrl: "", amenities: ["WiFi", "AC", "Food", "Laundry", "CCTV"], conditions: "No late entry after 11PM.", verified: true, featured: true, description: "Premium PG in Koramangala IT hub.", category: "PG" },
+  { id: 12, name: "Delhi Girls Hostel", owner: "Priya Sharma", phone: "9811100002", location: "Lajpat Nagar, Delhi", nearBy: "Metro Station 0.2km", type: "Girls", rating: 4.6, reviews: 89, price: 8500, deposit: 17000, available: 2, total: 20, photos: ["🛏️"], photoUrls: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600"], videoUrl: "", amenities: ["WiFi", "AC", "Food", "Security Guard", "CCTV"], conditions: "Girls only. No visitors.", verified: true, featured: false, description: "Safe girls hostel near metro.", category: "PG" },
+  { id: 13, name: "Mumbai Co-Living", owner: "Rahul Mehta", phone: "9811100003", location: "Andheri West, Mumbai", nearBy: "Andheri Station 1km", type: "Co-ed", rating: 4.2, reviews: 45, price: 12000, deposit: 24000, available: 3, total: 15, photos: ["🛏️"], photoUrls: ["https://images.unsplash.com/photo-1556911220-bff31c812dba?w=600"], videoUrl: "", amenities: ["WiFi", "AC", "Gym", "Cafeteria", "Netflix"], conditions: "Working professionals preferred.", verified: true, featured: true, description: "Modern co-living space in Mumbai.", category: "PG" },
+  { id: 14, name: "Chennai Student PG", owner: "Vijay Kumar", phone: "9811100004", location: "Anna Nagar, Chennai", nearBy: "Anna Nagar Tower 0.8km", type: "Boys", rating: 3.9, reviews: 28, price: 5500, deposit: 11000, available: 6, total: 18, photos: ["🛏️"], photoUrls: ["https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600"], videoUrl: "", amenities: ["WiFi", "Food", "Study Room", "Laundry"], conditions: "Students only. Mess mandatory.", verified: false, featured: false, description: "Budget PG for students.", category: "PG" },
+];
+
+const EXTRA_HOTELS = [
+  { id: 201, name: "Bangalore Business Inn", owner: "Suresh Nair", phone: "9811200001", location: "MG Road, Bangalore", nearBy: "Brigade Road 0.3km", type: "Deluxe", rating: 4.3, reviews: 124, price: 1800, deposit: 0, available: 8, total: 30, photos: ["🏨"], photoUrls: ["https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600"], videoUrl: "", amenities: ["WiFi", "AC", "Restaurant", "Parking", "Room Service"], conditions: "Check-in 2PM, Check-out 12PM.", verified: true, featured: true, description: "Business hotel in heart of Bangalore.", category: "Hotel" },
+  { id: 202, name: "Mumbai Sea View Hotel", owner: "Anita Bose", phone: "9811200002", location: "Marine Lines, Mumbai", nearBy: "Marine Drive 0.1km", type: "Premium", rating: 4.7, reviews: 203, price: 3500, deposit: 0, available: 2, total: 25, photos: ["🏨"], photoUrls: ["https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600"], videoUrl: "", amenities: ["WiFi", "AC", "Restaurant", "Gym", "Sea View"], conditions: "Check-in 3PM, Check-out 11AM.", verified: true, featured: true, description: "Premium hotel with sea view.", category: "Hotel" },
+  { id: 203, name: "Delhi Budget Stay", owner: "Ramesh Gupta", phone: "9811200003", location: "Karol Bagh, Delhi", nearBy: "Karol Bagh Metro 0.5km", type: "Standard", rating: 3.7, reviews: 56, price: 900, deposit: 0, available: 10, total: 20, photos: ["🏨"], photoUrls: ["https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=600"], videoUrl: "", amenities: ["WiFi", "AC", "Parking"], conditions: "ID proof mandatory.", verified: false, featured: false, description: "Affordable stay near metro.", category: "Hotel" },
+];
+
+const EXTRA_APARTMENTS = [
+  { id: 301, name: "Bangalore IT Park Flat", owner: "Deepa Krishnan", phone: "9811300001", location: "Whitefield, Bangalore", nearBy: "ITPL 0.5km", type: "2BHK", rating: 4.6, reviews: 34, price: 22000, deposit: 44000, available: 1, total: 10, photos: ["🏢"], photoUrls: ["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600"], videoUrl: "", amenities: ["WiFi", "AC", "Gym", "Swimming Pool", "Security", "Parking"], conditions: "11-month agreement. 2 months notice.", verified: true, featured: true, description: "Premium 2BHK near ITPL tech park.", category: "Apartment" },
+  { id: 302, name: "Mumbai Studio Apartment", owner: "Kavita Shah", phone: "9811300002", location: "Powai, Mumbai", nearBy: "Hiranandani 0.3km", type: "Studio", rating: 4.1, reviews: 18, price: 25000, deposit: 50000, available: 1, total: 5, photos: ["🏢"], photoUrls: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600"], videoUrl: "", amenities: ["WiFi", "AC", "Security", "Parking", "Power Backup"], conditions: "Working professionals only.", verified: true, featured: false, description: "Modern studio in Powai.", category: "Apartment" },
+  { id: 303, name: "Pune IT Hub 1BHK", owner: "Amit Joshi", phone: "9811300003", location: "Hinjewadi, Pune", nearBy: "Infosys Campus 1km", type: "1BHK", rating: 4.0, reviews: 22, price: 12000, deposit: 24000, available: 2, total: 8, photos: ["🏢"], photoUrls: ["https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600"], videoUrl: "", amenities: ["WiFi", "Parking", "Security"], conditions: "Families & professionals. 1 month notice.", verified: false, featured: false, description: "Affordable 1BHK near IT hub.", category: "Apartment" },
+];
+
+const EXTRA_HOUSES = [
+  { id: 401, name: "Jaipur Heritage Bungalow", owner: "Rajesh Singhania", phone: "9811400001", location: "Civil Lines, Jaipur", nearBy: "City Palace 3km", type: "4BHK", rating: 4.5, reviews: 9, price: 15000, deposit: 30000, available: 1, total: 1, photos: ["🏠"], photoUrls: ["https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600"], videoUrl: "", amenities: ["Parking", "Garden", "Borewell", "AC", "Security"], conditions: "Family preferred. 3 months notice.", verified: true, featured: true, description: "Spacious heritage bungalow.", category: "House" },
+  { id: 402, name: "Bangalore Villa", owner: "Sunita Rao", phone: "9811400002", location: "Sarjapur Road, Bangalore", nearBy: "Electronic City 5km", type: "3BHK", rating: 4.3, reviews: 14, price: 35000, deposit: 70000, available: 1, total: 1, photos: ["🏠"], photoUrls: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600"], videoUrl: "", amenities: ["AC", "Parking", "Garden", "Security", "Swimming Pool"], conditions: "Families only. 2 months notice.", verified: true, featured: false, description: "Luxury villa with pool.", category: "House" },
+];
+
+const ALL_LISTINGS = {
+  PG: [...PGS, ...EXTRA_PGS],
+  Hotel: [...HOTELS, ...EXTRA_HOTELS],
+  Apartment: [...APARTMENTS, ...EXTRA_APARTMENTS],
+  House: [...HOUSES, ...EXTRA_HOUSES],
+};
+
+const CATEGORIES = [
+  { key: "PG", label: "PG / Hostel", icon: "🛏️", color: "#6366f1", bg: "#eff6ff", desc: "Paying Guest accommodations" },
+  { key: "Hotel", label: "Hotels", icon: "🏨", color: "#0891b2", bg: "#ecfeff", desc: "Daily / short stay hotels" },
+  { key: "Apartment", label: "Apartments", icon: "🏢", color: "#059669", bg: "#f0fdf4", desc: "Furnished & unfurnished flats" },
+  { key: "House", label: "Houses", icon: "🏠", color: "#d97706", bg: "#fffbeb", desc: "Independent houses for rent" },
+];
+
+// ─── Admin Dashboard ───────────────────────────────────────────────────────────
+// Item 71 of Admin Panel plan: Dashboard.
+// Live counts come from Firestore (listings/bookings/complaints added via the
+// FB helper elsewhere in this file); falls back gracefully if Firebase isn't
+// reachable. Mock catalogue (ALL_LISTINGS) is included in the listings total
+// since those are the seeded/demo listings currently shown in the app.
+function AdminDashboard({ onLogout }) {
+  const [liveListingCount, setLiveListingCount] = useState(0);
+  const [liveBookingCount, setLiveBookingCount] = useState(0);
+  const [complaintStats, setComplaintStats] = useState({ open: 0, resolved: 0 });
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        if (!window.db) { setLoadError(true); setLoading(false); return; }
+        const [listingsSnap, bookingsSnap, complaintsSnap] = await Promise.all([
+          window.db.collection("listings").get(),
+          window.db.collection("bookings").get(),
+          window.db.collection("complaints").get(),
+        ]);
+        if (cancelled) return;
+
+        const complaintsData = complaintsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const bookingsData = bookingsSnap.docs.map(d => ({ id: d.id, type: "booking", ...d.data() }));
+        const complaintsAsEvents = complaintsData.map(c => ({ ...c, type: "complaint" }));
+
+        const merged = [...bookingsData, ...complaintsAsEvents]
+          .filter(e => e.createdAt)
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 6);
+
+        setLiveListingCount(listingsSnap.size);
+        setLiveBookingCount(bookingsSnap.size);
+        setComplaintStats({
+          open: complaintsData.filter(c => c.status !== "resolved").length,
+          resolved: complaintsData.filter(c => c.status === "resolved").length,
+        });
+        setRecentActivity(merged);
+      } catch (e) {
+        console.log("Admin dashboard fetch error:", e);
+        setLoadError(true);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const categoryBreakdown = Object.keys(ALL_LISTINGS).map(key => ({
+    key, count: ALL_LISTINGS[key].length,
+  }));
+  const mockListingTotal = categoryBreakdown.reduce((sum, c) => sum + c.count, 0);
+  const totalListings = mockListingTotal + liveListingCount;
+  const estimatedRevenue = totalListings * 199; // ₹199 flat listing fee model
+
+  const STAT_CARDS = [
+    { label: "Total Listings", value: totalListings, icon: "🏠" },
+    { label: "Total Bookings", value: liveBookingCount, icon: "📋" },
+    { label: "Open Complaints", value: complaintStats.open, icon: "📢" },
+    { label: "Est. Revenue", value: `₹${estimatedRevenue.toLocaleString("en-IN")}`, icon: "💰" },
+  ];
+
+  return (
+    <div style={{ fontFamily: "'Segoe UI', system-ui, sans-serif", background: "#f9fafb", minHeight: "100vh", maxWidth: 430, margin: "0 auto", paddingBottom: 40 }}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg, #0f2a3a 0%, #173c50 100%)", padding: "48px 16px 24px", color: "#fff" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <img src={LOGO_URL} alt="Kailnest" style={{ width: 32, height: 32, objectFit: "contain" }} />
+            <div>
+              <div style={{ fontSize: 18, fontWeight: 900 }}>Kailnest Admin</div>
+              <div style={{ fontSize: 11, opacity: 0.75 }}>Platform overview</div>
+            </div>
+          </div>
+          <button onClick={onLogout} style={{
+            background: "rgba(255,255,255,0.15)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)",
+            borderRadius: 10, padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer"
+          }}>Logout</button>
+        </div>
+      </div>
+
+      <div style={{ padding: 16 }}>
+        {loadError && (
+          <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 12, padding: 12, marginBottom: 14, fontSize: 12, color: "#dc2626" }}>
+            ⚠️ Live data unavailable right now — showing catalogue listings only. Bookings/complaints counts need a working Firebase connection.
+          </div>
+        )}
+
+        {/* Stat cards */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+          {STAT_CARDS.map(s => (
+            <div key={s.label} style={{ background: "#fff", borderRadius: 12, padding: 14, border: "1px solid #f3f4f6", textAlign: "center" }}>
+              <div style={{ fontSize: 24 }}>{s.icon}</div>
+              <div style={{ fontWeight: 800, fontSize: 18, color: "#0f2a3a" }}>{loading ? "…" : s.value}</div>
+              <div style={{ fontSize: 11, color: "#9ca3af" }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Category breakdown */}
+        <div style={{ background: "#fff", borderRadius: 14, padding: 16, border: "1px solid #f3f4f6", marginBottom: 16 }}>
+          <div style={{ fontWeight: 800, fontSize: 14, marginBottom: 12, color: "#0f2a3a" }}>Listings by Category</div>
+          {categoryBreakdown.map(c => {
+            const cat = CATEGORIES.find(x => x.key === c.key);
+            const pct = totalListings > 0 ? Math.round((c.count / totalListings) * 100) : 0;
+            return (
+              <div key={c.key} style={{ marginBottom: 10 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}>
+                  <span style={{ fontWeight: 700, color: "#374151" }}>{cat?.icon} {cat?.label || c.key}</span>
+                  <span style={{ color: "#9ca3af" }}>{c.count}</span>
+                </div>
+                <div style={{ background: "#f3f4f6", borderRadius: 10, height: 8 }}>
+                  <div style={{ width: `${pct}%`, height: "100%", background: cat?.color || "#6366f1", borderRadius: 10 }} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Recent activity */}
+        <div style={{ background: "#fff", borderRadius: 14, padding: 16, border: "1px solid #f3f4f6" }}>
+          <div style={{ fontWeight: 800, fontSize: 14, marginBottom: 12, color: "#0f2a3a" }}>Recent Activity</div>
+          {loading ? (
+            <div style={{ fontSize: 12, color: "#9ca3af", textAlign: "center", padding: "12px 0" }}>Loading…</div>
+          ) : recentActivity.length === 0 ? (
+            <div style={{ fontSize: 12, color: "#9ca3af", textAlign: "center", padding: "12px 0" }}>No recent activity yet</div>
+          ) : (
+            recentActivity.map((e, i) => (
+              <div key={e.id || i} style={{ display: "flex", gap: 10, padding: "8px 0", borderBottom: i < recentActivity.length - 1 ? "1px solid #f3f4f6" : "none" }}>
+                <div style={{ fontSize: 18 }}>{e.type === "booking" ? "📋" : "📢"}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 12.5, fontWeight: 700, color: "#111" }}>
+                    {e.type === "booking" ? `New booking · ${e.name || e.pgName || "Listing"}` : `Complaint · ${e.category || "Issue raised"}`}
+                  </div>
+                  <div style={{ fontSize: 10.5, color: "#9ca3af", marginTop: 2 }}>
+                    {e.createdAt ? new Date(e.createdAt).toLocaleString("en-IN") : ""}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div style={{ marginTop: 16, textAlign: "center", fontSize: 11, color: "#9ca3af", lineHeight: 1.6 }}>
+          More admin tools — User Management, Owner Management, Listing Approval,<br />Reports, Analytics — coming next.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function PGFinderApp() {
+  const [tab, setTab] = useState("search");
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [user, setUser] = useState(null);
+  const [lang, setLang] = useState("en"); // en | te | hi
+  const t = TRANSLATIONS[lang]; // shortcut for translations // null = not logged in
+  const [citySelected, setCitySelected] = useState(false);
+  const [selectedCity, setSelectedCity] = useState("All India");
+  const [showCityPicker, setShowCityPicker] = useState(false);
+  const [showTerms, setShowTerms] = useState(null); // "terms" | "privacy" | null
+  const [search, setSearch] = useState("");
+  const [filterType, setFilterType] = useState("All");
+  const [filterGender, setFilterGender] = useState("All"); // for Houses/Apartments
+  const [filterAC, setFilterAC] = useState("All"); // All/AC/Non-AC
+  const [filterFurnished, setFilterFurnished] = useState("All"); // All/Furnished/Unfurnished
+  const [wishlist, setWishlist] = useState([]); // listing ids saved
+  const [showWishlist, setShowWishlist] = useState(false);
+  const [maxPrice, setMaxPrice] = useState(50000);
+
+  const toggleWishlist = (id) => setWishlist(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  const [selectedPG, setSelectedPG] = useState(null);
+  const [bookingPG, setBookingPG] = useState(null);
+  const [showSubscription, setShowSubscription] = useState(false);
+  const [bookings, setBookings] = useState([]);
+  const [ownerNotifications, setOwnerNotifications] = useState([]);
+  const [showFilters, setShowFilters] = useState(false);
+  const [vacationBooking, setVacationBooking] = useState(null);
+  const [vacatedBookings, setVacatedBookings] = useState([]);
+  const [showSupport, setShowSupport] = useState(false);
+  const [showMediaUpload, setShowMediaUpload] = useState(false);
+  const [showListingForm, setShowListingForm] = useState(false);
+  const [ownerPlan, setOwnerPlan] = useState(null); // null=no plan, {name, limit, listings}
+  const [ownerListings, setOwnerListings] = useState([]); // owner's own listings
+
+  const PLAN_LIMITS = { Basic: 1, Pro: 5, Premium: 20 };
+
+  const handleAddListing = () => {
+    if (!ownerPlan) {
+      // No subscription — show subscription modal
+      setShowSubscription(true);
+      return;
+    }
+    const limit = PLAN_LIMITS[ownerPlan.name] || 0;
+    if (ownerListings.length >= limit) {
+      alert(`మీ ${ownerPlan.name} plan లో maximum ${limit} listing(s) మాత్రమే add చేయవచ్చు.\n\nMore listings కోసం plan upgrade చేయండి!`);
+      setShowSubscription(true);
+      return;
+    }
+    setShowListingForm(true);
+  };
+  const [chatPG, setChatPG] = useState(null);
+  const [showAgreement, setShowAgreement] = useState(null);
+  const [complaintBooking, setComplaintBooking] = useState(null);
+  const [complaints, setComplaints] = useState([]);
+  const [showOwnerComplaints, setShowOwnerComplaints] = useState(false);
+  const CURRENT_OWNER_ID = "Ravi Kumar"; // simulates the logged-in owner; in real app this comes from auth
+
+  // Auto-reminder simulation: every 20s (demo speed) bump reminderCount for open complaints
+  // In production this would be a backend cron job sending push/SMS/WhatsApp to the owner every 24hrs
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setComplaints(prev => prev.map(c =>
+        c.status === "open"
+          ? { ...c, reminderCount: c.reminderCount + 1, lastReminderAt: new Date().toISOString() }
+          : c
+      ));
+    }, 20000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentListings = activeCategory ? (ALL_LISTINGS[activeCategory] || []) : PGS;
+  const filtered = currentListings.filter(pg => {
+    const matchSearch = pg.name.toLowerCase().includes(search.toLowerCase()) ||
+      pg.location.toLowerCase().includes(search.toLowerCase()) ||
+      pg.nearBy.toLowerCase().includes(search.toLowerCase());
+    const matchType = filterType === "All" || pg.type === filterType;
+    const matchGender = filterGender === "All" || pg.type === filterGender;
+    const matchAC = filterAC === "All" ||
+      (filterAC === "AC" && pg.amenities?.includes("AC")) ||
+      (filterAC === "Non-AC" && !pg.amenities?.includes("AC"));
+    const matchFurnished = filterFurnished === "All" ||
+      (filterFurnished === "Furnished" && pg.amenities?.some(a => a.toLowerCase().includes("furnish"))) ||
+      (filterFurnished === "Unfurnished" && !pg.amenities?.some(a => a.toLowerCase().includes("furnish")));
+    const matchPrice = pg.price <= maxPrice;
+    const matchCity = selectedCity === "All India" || pg.location.toLowerCase().includes(selectedCity.toLowerCase());
+    return matchSearch && matchType && matchGender && matchAC && matchFurnished && matchPrice && matchCity;
+  });
+  // Featured listings (paid ads) first
+  const sortedFiltered = [...filtered].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+
+  // Show login screen if not logged in
+  if (!user) return <LoginScreen onLogin={(u) => setUser(u)} lang={lang} setLang={setLang} />;
+
+  // Admin users get a dedicated dashboard, not the tenant/owner search UI
+  if (user.role === "admin") return <AdminDashboard onLogout={() => setUser(null)} />;
+
+  // Show city selector after login (first time)
+  if (!citySelected) return (
+    <CitySelectorScreen onSelectCity={(city) => { setSelectedCity(city); setCitySelected(true); }} t={t} />
+  );
+
+  if (selectedPG) return (
+    <PGDetail pg={selectedPG} onBack={() => setSelectedPG(null)} onBook={pg => { setSelectedPG(null); setBookingPG(pg); }} />
+  );
+
+  return (
+    <div style={{ fontFamily: "'Segoe UI', system-ui, sans-serif", background: "#f9fafb", minHeight: "100vh", maxWidth: 430, margin: "0 auto" }}>
+      {/* Header */}
+      <div style={{
+        background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+        padding: "48px 16px 20px", color: "#fff"
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <img src={LOGO_URL} alt="Kailnest" style={{ width: 36, height: 36, objectFit: "contain" }} />
+            <div>
+              <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: -0.5, color: "#fff" }}>Kailnest</div>
+              <div style={{ fontSize: 10, opacity: 0.8 }}>PG · Hotels · Apartments · Houses</div>
+            </div>
+          </div>
+          <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+            <div style={{ fontSize: 12, color: "#c7d2fe" }}>👤 {user?.name}</div>
+            <div style={{ display: "flex", gap: 4 }}>
+              {["en", "te", "hi"].map(l => (
+                <button key={l} onClick={() => setLang(l)} style={{
+                  background: lang === l ? "#fff" : "rgba(255,255,255,0.2)",
+                  color: lang === l ? "#6366f1" : "#fff",
+                  border: "none", borderRadius: 8, padding: "2px 8px",
+                  fontSize: 11, fontWeight: 700, cursor: "pointer"
+                }}>{l === "en" ? "EN" : l === "te" ? "తె" : "हि"}</button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* City selector pill */}
+        <div onClick={() => setCitySelected(false)} style={{
+          display: "inline-flex", alignItems: "center", gap: 6, marginTop: 10,
+          background: "rgba(255,255,255,0.15)", borderRadius: 20, padding: "5px 14px",
+          cursor: "pointer", border: "1px solid rgba(255,255,255,0.3)"
+        }}>
+          <span style={{ fontSize: 14 }}>📍</span>
+          <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>{selectedCity}</span>
+          <span style={{ color: "#c7d2fe", fontSize: 11 }}>▼</span>
+        </div>
+
+        {tab === "search" && activeCategory && (
+          <>
+            <div style={{ position: "relative", marginTop: 14 }}>
+              <input
+                placeholder={`Search ${activeCategory}s by location or name...`}
+                value={search} onChange={e => setSearch(e.target.value)}
+                style={{
+                  width: "100%", padding: "12px 40px 12px 14px", borderRadius: 12,
+                  border: "none", fontSize: 14, boxSizing: "border-box",
+                  background: "rgba(255,255,255,0.95)", outline: "none"
+                }}
+              />
+              <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 18 }}>🔍</span>
+            </div>
+
+            {/* Quick filters — PG only shows Boys/Girls/Co-ed */}
+            {activeCategory === "PG" && (
+              <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+                {["All", "Boys", "Girls", "Co-ed"].map(t => (
+                  <button key={t} onClick={() => setFilterType(t)} style={{
+                    background: filterType === t ? "#fff" : "rgba(255,255,255,0.2)",
+                    color: filterType === t ? "#6366f1" : "#fff",
+                    border: "none", borderRadius: 20, padding: "5px 14px",
+                    fontSize: 13, fontWeight: 600, cursor: "pointer"
+                  }}>{t}</button>
+                ))}
+              </div>
+            )}
+
+            {showFilters && (
+              <div style={{ marginTop: 10, background: "rgba(255,255,255,0.15)", borderRadius: 10, padding: 12 }}>
+                <div style={{ fontSize: 12, color: "#fff", marginBottom: 4 }}>
+                  Max Rent: ₹{maxPrice.toLocaleString()}
+                </div>
+                <input type="range" min={500} max={50000} step={500} value={maxPrice}
+                  onChange={e => setMaxPrice(Number(e.target.value))}
+                  style={{ width: "100%" }} />
+              </div>
+            )}
+            <button onClick={() => setShowFilters(!showFilters)} style={{
+              background: "rgba(255,255,255,0.2)", color: "#fff", border: "none",
+              borderRadius: 20, padding: "5px 14px", fontSize: 13, fontWeight: 600,
+              cursor: "pointer", marginTop: 8
+            }}>⚙️ Filters</button>
+          </>
+        )}
+      </div>
+
+      {/* Content */}
+      <div style={{ padding: "16px 16px 80px" }}>
+        {tab === "search" && (
+          <>
+            {/* HOME SCREEN — Category Cards */}
+            {!activeCategory ? (
+              <>
+                <div style={{ fontWeight: 800, fontSize: 17, marginBottom: 4 }}>నమస్కారం 🙏</div>
+                <div style={{ fontSize: 13, color: "#6b7280", marginBottom: 16 }}>ఏ రకమైన accommodation కావాలి?</div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 24 }}>
+                  {CATEGORIES.map(cat => (
+                    <div key={cat.key} onClick={() => { setActiveCategory(cat.key); setFilterType("All"); setSearch(""); }} style={{
+                      background: cat.bg, borderRadius: 16, padding: 18, cursor: "pointer",
+                      border: `1.5px solid ${cat.color}22`, textAlign: "center",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.06)"
+                    }}>
+                      <div style={{ fontSize: 40, marginBottom: 8 }}>{cat.icon}</div>
+                      <div style={{ fontWeight: 800, fontSize: 14, color: cat.color }}>{cat.label}</div>
+                      <div style={{ fontSize: 11, color: "#6b7280", marginTop: 3 }}>{cat.desc}</div>
+                      <div style={{ marginTop: 8, background: cat.color, color: "#fff", borderRadius: 20, padding: "3px 10px", fontSize: 11, fontWeight: 700, display: "inline-block" }}>
+                        {ALL_LISTINGS[cat.key].length} listings →
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Featured across all categories */}
+                <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 12 }}>⭐ Featured Listings</div>
+                {[...PGS, ...HOTELS, ...APARTMENTS, ...HOUSES].filter(l => l.featured).map(l => (
+                  <PGCard key={l.id} pg={l} onView={setSelectedPG} onBook={setBookingPG} isWishlisted={wishlist.includes(l.id)} onWishlist={toggleWishlist} isWishlisted={wishlist.includes(pg.id)} onWishlist={toggleWishlist} />
+                ))}
+              </>
+            ) : (
+              <>
+                {/* CATEGORY LISTING SCREEN */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+                  <button onClick={() => setActiveCategory(null)} style={{
+                    background: "#f3f4f6", border: "none", borderRadius: 8,
+                    padding: "6px 12px", fontSize: 13, cursor: "pointer", fontWeight: 600
+                  }}>← Back</button>
+                  <div style={{ fontWeight: 800, fontSize: 16 }}>
+                    {CATEGORIES.find(c => c.key === activeCategory)?.icon} {CATEGORIES.find(c => c.key === activeCategory)?.label}
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                  <div style={{ fontSize: 14, color: "#6b7280" }}>{sortedFiltered.length} listings found</div>
+                  <div style={{ fontSize: 12, color: "#6366f1", fontWeight: 600 }}>📢 Ads first</div>
+                </div>
+
+                {/* Filter chips */}
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
+                  {(activeCategory === "House" || activeCategory === "Apartment") &&
+                    ["All", "Boys", "Girls", "Co-ed"].map(g => (
+                      <button key={g} onClick={() => setFilterGender(g)} style={{
+                        background: filterGender === g ? "#6366f1" : "#f3f4f6",
+                        color: filterGender === g ? "#fff" : "#374151",
+                        border: "none", borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer"
+                      }}>{g === "Girls" ? "👩" : g === "Boys" ? "👨" : ""} {g}</button>
+                    ))
+                  }
+                  {["All", "AC ❄️", "Non-AC 🌀"].map(a => (
+                    <button key={a} onClick={() => setFilterAC(a.split(" ")[0])} style={{
+                      background: filterAC === a.split(" ")[0] ? "#0891b2" : "#f3f4f6",
+                      color: filterAC === a.split(" ")[0] ? "#fff" : "#374151",
+                      border: "none", borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer"
+                    }}>{a}</button>
+                  ))}
+                  {["All", "Furnished 🛋️", "Unfurnished"].map(f => (
+                    <button key={f} onClick={() => setFilterFurnished(f.split(" ")[0])} style={{
+                      background: filterFurnished === f.split(" ")[0] ? "#059669" : "#f3f4f6",
+                      color: filterFurnished === f.split(" ")[0] ? "#fff" : "#374151",
+                      border: "none", borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer"
+                    }}>{f}</button>
+                  ))}
+                </div>
+
+                {filtered.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: 40, color: "#9ca3af" }}>
+                    <div style={{ fontSize: 48 }}>{CATEGORIES.find(c => c.key === activeCategory)?.icon}</div>
+                    <div style={{ fontSize: 16, fontWeight: 600, marginTop: 8 }}>No listings found</div>
+                    <div style={{ fontSize: 13, marginTop: 4 }}>Try different filters</div>
+                  </div>
+                ) : (
+                  sortedFiltered.map(pg => (
+                    <PGCard key={pg.id} pg={pg} onView={setSelectedPG} onBook={setBookingPG} isWishlisted={wishlist.includes(pg.id)} onWishlist={toggleWishlist} />
+                  ))
+                )}
+              </>
+            )}
+          </>
+        )}
+
+        {tab === "bookings" && (
+          <>
+            <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 16 }}>My Bookings</div>
+
+            {bookings.length === 0 && (
+              <div style={{ background: "#f0f0ff", borderRadius: 12, padding: 12, marginBottom: 14, border: "1px dashed #6366f1", fontSize: 13, color: "#4338ca" }}>
+                💡 Book a PG first to see it here. Or add demo booking below:
+                <button onClick={() => setBookings([PGS[0]])} style={{ display: "block", marginTop: 8, background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Add Demo Booking</button>
+              </div>
+            )}
+
+            {bookings.length === 0 ? (
+              <div style={{ textAlign: "center", padding: 30, color: "#9ca3af" }}>
+                <div style={{ fontSize: 48 }}>📋</div>
+                <div style={{ fontSize: 16, fontWeight: 600, marginTop: 8 }}>No bookings yet</div>
+                <button onClick={() => setTab("search")} style={{ marginTop: 12, background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "#fff", border: "none", borderRadius: 12, padding: "10px 24px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>Find a PG</button>
+              </div>
+            ) : (
+              bookings.map((b, i) => {
+                const isVacated = vacatedBookings.includes(b.id);
+                return (
+                  <div key={i} style={{ background: "#fff", borderRadius: 16, padding: 14, marginBottom: 14, border: isVacated ? "1.5px solid #fca5a5" : "1px solid #f3f4f6" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: 15 }}>{b.name}</div>
+                        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>📍 {b.location}</div>
+                        <div style={{ fontSize: 12, color: "#6b7280" }}>👤 {b.owner} · 📞 {b.phone}</div>
+                      </div>
+                      <div style={{ background: isVacated ? "#fef2f2" : "#f0fdf4", color: isVacated ? "#dc2626" : "#16a34a", borderRadius: 20, padding: "3px 10px", fontSize: 11, fontWeight: 700, border: `1px solid ${isVacated ? "#fecaca" : "#bbf7d0"}` }}>
+                        {isVacated ? "🚪 Notice Sent" : "✅ Active"}
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", gap: 12, marginTop: 10, background: "#f9fafb", borderRadius: 10, padding: "8px 12px" }}>
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: "#6366f1" }}>₹{b.price?.toLocaleString()}</div>
+                        <div style={{ fontSize: 10, color: "#9ca3af" }}>Rent/mo</div>
+                      </div>
+                      <div style={{ width: 1, background: "#e5e7eb" }} />
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: "#374151" }}>₹{b.deposit?.toLocaleString()}</div>
+                        <div style={{ fontSize: 10, color: "#9ca3af" }}>Deposit</div>
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+                      <a href={`tel:${b.phone}`} style={{ flex: 1, textAlign: "center", padding: "9px", background: "#f0fdf4", color: "#16a34a", borderRadius: 10, fontSize: 12, fontWeight: 700, textDecoration: "none", border: "1px solid #bbf7d0" }}>📞 Call</a>
+                      <button onClick={() => setChatPG(b)} style={{ flex: 1, padding: "9px", background: "#eff6ff", color: "#6366f1", border: "1px solid #bfdbfe", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>💬 Chat</button>
+                      <button onClick={() => setShowAgreement(b)} style={{ flex: 1, padding: "9px", background: "#f5f3ff", color: "#7c3aed", border: "1px solid #ddd6fe", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>📄 PDF</button>
+                      <button onClick={() => setComplaintBooking(b)} style={{ flex: 1, padding: "9px", background: "#fff", color: "#dc2626", border: "1.5px solid #fecaca", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>📢</button>
+                      {!isVacated && (
+                        <button onClick={() => setVacationBooking(b)} style={{ flex: 1, padding: "9px", background: "linear-gradient(135deg, #f59e0b, #ef4444)", color: "#fff", border: "none", borderRadius: 10, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>🏃 Vacate</button>
+                      )}
+                    </div>
+
+                    {/* Cash payment verification */}
+                    {b.cashStatus === "pending" && (
+                      <div style={{ marginTop: 10, background: "#fffbeb", borderRadius: 10, padding: "10px 12px", border: "1px solid #fde68a" }}>
+                        <div style={{ fontWeight: 700, fontSize: 12, color: "#92400e", marginBottom: 6 }}>💵 Cash Payment Pending</div>
+                        <div style={{ fontSize: 11, color: "#78350f", marginBottom: 8 }}>Owner కి cash ఇచ్చారా? Confirm చేయండి.</div>
+                        <button onClick={() => {
+                          setBookings(prev => prev.map((bk, idx) => idx === i ? { ...bk, cashStatus: "tenant_confirmed" } : bk));
+                          setOwnerNotifications(prev => [...prev, {
+                            id: Date.now(), type: "cash_confirmed", pgName: b.name,
+                            message: `✅ Tenant cash payment confirm చేశారు — ${b.name}.`,
+                            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), read: false,
+                          }]);
+                        }} style={{ width: "100%", padding: "8px", background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "#fff", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>💵 Cash Pay చేశాను — Confirm</button>
+                      </div>
+                    )}
+                    {b.cashStatus === "tenant_confirmed" && (
+                      <div style={{ marginTop: 10, background: "#fef9c3", borderRadius: 10, padding: "8px 12px", border: "1px solid #fde68a" }}>
+                        <div style={{ fontSize: 12, color: "#854d0e", fontWeight: 700 }}>⏳ Cash confirmed — Owner verification pending</div>
+                      </div>
+                    )}
+                    {b.cashStatus === "owner_verified" && (
+                      <div style={{ marginTop: 10, background: "#f0fdf4", borderRadius: 10, padding: "8px 12px", border: "1px solid #bbf7d0" }}>
+                        <div style={{ fontSize: 12, color: "#166534", fontWeight: 700 }}>✅ Cash Payment Complete!</div>
+                      </div>
+                    )}
+                    {b.cashStatus === "online_paid" && (
+                      <div style={{ marginTop: 10, background: "#f0fdf4", borderRadius: 10, padding: "8px 12px", border: "1px solid #bbf7d0" }}>
+                        <div style={{ fontSize: 12, color: "#166534", fontWeight: 700 }}>✅ Online Payment Complete</div>
+                      </div>
+                    )}
+
+                    {/* Payment status */}
+                    {b.cashStatus === "pending" && (
+                      <div style={{ marginTop: 10, background: "#fffbeb", borderRadius: 10, padding: "10px 12px", border: "1px solid #fde68a" }}>
+                        <div style={{ fontWeight: 700, fontSize: 12, color: "#92400e", marginBottom: 6 }}>💵 Cash Payment Pending</div>
+                        <div style={{ fontSize: 11, color: "#78350f", marginBottom: 8 }}>Owner కి cash ఇచ్చారా? Confirm చేయండి.</div>
+                        <button onClick={() => {
+                          setBookings(prev => prev.map((bk, idx) => idx === i ? { ...bk, cashStatus: "tenant_confirmed" } : bk));
+                          setOwnerNotifications(prev => [...prev, {
+                            id: Date.now(),
+                            type: "cash_confirmed",
+                            pgName: b.name,
+                            message: `✅ Tenant cash payment confirm చేశారు — ${b.name}. Please verify and acknowledge.`,
+                            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                            read: false,
+                          }]);
+                        }} style={{
+                          width: "100%", padding: "8px", background: "linear-gradient(135deg, #f59e0b, #d97706)",
+                          color: "#fff", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer"
+                        }}>💵 Cash Pay చేశాను — Confirm</button>
+                      </div>
+                    )}
+
+                    {b.cashStatus === "tenant_confirmed" && (
+                      <div style={{ marginTop: 10, background: "#fef9c3", borderRadius: 10, padding: "8px 12px", border: "1px solid #fde68a" }}>
+                        <div style={{ fontSize: 12, color: "#854d0e", fontWeight: 700 }}>⏳ Cash confirmed by you — Owner verification pending</div>
+                      </div>
+                    )}
+
+                    {b.cashStatus === "owner_verified" && (
+                      <div style={{ marginTop: 10, background: "#f0fdf4", borderRadius: 10, padding: "8px 12px", border: "1px solid #bbf7d0" }}>
+                        <div style={{ fontSize: 12, color: "#166534", fontWeight: 700 }}>✅ Cash Payment Complete — Owner verified!</div>
+                      </div>
+                    )}
+
+                    {b.cashStatus === "online_paid" && (
+                      <div style={{ marginTop: 10, background: "#f0fdf4", borderRadius: 10, padding: "8px 12px", border: "1px solid #bbf7d0" }}>
+                        <div style={{ fontSize: 12, color: "#166534", fontWeight: 700 }}>✅ Online Payment Complete</div>
+                      </div>
+                    )}
+                    {complaints.filter(c => c.pgId === b.id && c.status === "open").length > 0 && (
+                      <div style={{ marginTop: 10, background: "#fef2f2", borderRadius: 10, padding: "8px 12px", fontSize: 12, color: "#991b1b", border: "1px solid #fecaca" }}>
+                        📢 {complaints.filter(c => c.pgId === b.id && c.status === "open").length} complaint(s) pending with owner
+                      </div>
+                    )}
+
+                    {isVacated && (
+                      <div style={{ marginTop: 10, background: "#fffbeb", borderRadius: 10, padding: "8px 12px", fontSize: 12, color: "#92400e", border: "1px solid #fde68a" }}>
+                        ⏳ Owner notified. Deposit refund process pending.
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </>
+        )}
+
+        {/* Wishlist Tab */}
+        {tab === "wishlist" && (
+          <>
+            <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 4 }}>❤️ Saved Listings</div>
+            <div style={{ fontSize: 13, color: "#6b7280", marginBottom: 16 }}>{wishlist.length} saved</div>
+            {wishlist.length === 0 ? (
+              <div style={{ textAlign: "center", padding: 40, color: "#9ca3af" }}>
+                <div style={{ fontSize: 48 }}>🤍</div>
+                <div style={{ fontSize: 16, fontWeight: 600, marginTop: 8 }}>No saved listings yet</div>
+                <div style={{ fontSize: 13, marginTop: 4 }}>PG/Hotel card మీద ❤️ నొక్కి save చేయి</div>
+                <button onClick={() => setTab("search")} style={{
+                  marginTop: 14, background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                  color: "#fff", border: "none", borderRadius: 12, padding: "10px 24px",
+                  fontSize: 14, fontWeight: 700, cursor: "pointer"
+                }}>Browse Listings</button>
+              </div>
+            ) : (
+              [...PGS, ...EXTRA_PGS, ...HOTELS, ...EXTRA_HOTELS, ...APARTMENTS, ...EXTRA_APARTMENTS, ...HOUSES, ...EXTRA_HOUSES]
+                .filter(pg => wishlist.includes(pg.id))
+                .map(pg => (
+                  <PGCard key={pg.id} pg={pg} onView={setSelectedPG} onBook={setBookingPG}
+                    isWishlisted={true} onWishlist={toggleWishlist} />
+                ))
+            )}
+          </>
+        )}
+
+        {tab === "owner" && (
+          <>
+            <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 4 }}>Owner Portal</div>
+            <div style={{ color: "#6b7280", fontSize: 13, marginBottom: 16 }}>List and manage your PGs</div>
+
+            {/* Stats */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+              {[
+                { label: "Total Listings", value: "2", icon: "🏠" },
+                { label: "Active Tenants", value: "14", icon: "👥" },
+                { label: "Enquiries", value: "8", icon: "📞" },
+                { label: "Revenue", value: "₹63K", icon: "💰" },
+              ].map(s => (
+                <div key={s.label} style={{
+                  background: "#fff", borderRadius: 12, padding: 14,
+                  border: "1px solid #f3f4f6", textAlign: "center"
+                }}>
+                  <div style={{ fontSize: 24 }}>{s.icon}</div>
+                  <div style={{ fontWeight: 800, fontSize: 18, color: "#6366f1" }}>{s.value}</div>
+                  <div style={{ fontSize: 11, color: "#9ca3af" }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <button onClick={handleAddListing} style={{
+              width: "100%", padding: "14px",
+              background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+              color: "#fff", border: "none", borderRadius: 14, fontSize: 15,
+              fontWeight: 700, cursor: "pointer", marginBottom: 10
+            }}>➕ Add New PG Listing</button>
+
+            {/* Plan status */}
+            {ownerPlan ? (
+              <div style={{ background: "#f0fdf4", borderRadius: 12, padding: 12, marginBottom: 10, border: "1px solid #bbf7d0" }}>
+                <div style={{ fontWeight: 700, color: "#166534", fontSize: 13 }}>✅ {ownerPlan.name} Plan Active</div>
+                <div style={{ fontSize: 12, color: "#16a34a", marginTop: 2 }}>
+                  {ownerListings.length} / {PLAN_LIMITS[ownerPlan.name]} listings used
+                </div>
+                {/* Progress bar */}
+                <div style={{ background: "#dcfce7", borderRadius: 10, height: 6, marginTop: 6 }}>
+                  <div style={{ width: `${(ownerListings.length / PLAN_LIMITS[ownerPlan.name]) * 100}%`, height: "100%", background: "#16a34a", borderRadius: 10 }} />
+                </div>
+              </div>
+            ) : (
+              <div style={{ background: "#fef2f2", borderRadius: 12, padding: 12, marginBottom: 10, border: "1px solid #fecaca" }}>
+                <div style={{ fontWeight: 700, color: "#dc2626", fontSize: 13 }}>❌ No Active Plan</div>
+                <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>Listing add చేయాలంటే subscription కావాలి</div>
+              </div>
+            )}
+
+            <button onClick={() => setShowMediaUpload(true)} style={{
+              width: "100%", padding: "14px",
+              background: "#fff", color: "#6366f1", border: "2px solid #6366f1", borderRadius: 14, fontSize: 15,
+              fontWeight: 700, cursor: "pointer", marginBottom: 10
+            }}>📸 Add Photos & Video to Listing</button>
+
+            {/* Owner Notifications */}
+            {ownerNotifications.length > 0 && (
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
+                  <span>🔔 Notifications ({ownerNotifications.filter(n => !n.read).length} new)</span>
+                  <span onClick={() => setOwnerNotifications(prev => prev.map(n => ({ ...n, read: true })))}
+                    style={{ fontSize: 12, color: "#6366f1", cursor: "pointer", fontWeight: 600 }}>All read</span>
+                </div>
+                {ownerNotifications.slice().reverse().map(n => (
+                  <div key={n.id} onClick={() => setOwnerNotifications(prev => prev.map(x => x.id === n.id ? { ...x, read: true } : x))} style={{
+                    background: n.read ? "#f9fafb" : "#eff6ff",
+                    borderRadius: 12, padding: "12px 14px", marginBottom: 8, cursor: "pointer",
+                    border: n.read ? "1px solid #f3f4f6" : "1.5px solid #bfdbfe"
+                  }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div style={{ fontSize: 20 }}>
+                        {n.type === "cash_pending" ? "💵" : n.type === "cash_confirmed" ? "✅" : "💳"}
+                      </div>
+                      <div style={{ fontSize: 10, color: "#9ca3af" }}>{n.time}</div>
+                    </div>
+                    <div style={{ fontWeight: 700, fontSize: 13, color: "#111", marginTop: 4 }}>{n.pgName}</div>
+                    <div style={{ fontSize: 12, color: "#374151", marginTop: 3, lineHeight: 1.5 }}>{n.message}</div>
+                    {n.type === "cash_confirmed" && (
+                      <button onClick={(e) => {
+                        e.stopPropagation();
+                        setBookings(prev => prev.map(b => b.name === n.pgName ? { ...b, cashStatus: "owner_verified" } : b));
+                        setOwnerNotifications(prev => prev.map(x => x.id === n.id ? { ...x, type: "done", read: true, message: "✅ Cash verified by you!" } : x));
+                      }} style={{
+                        marginTop: 8, width: "100%", padding: "7px",
+                        background: "linear-gradient(135deg, #16a34a, #15803d)",
+                        color: "#fff", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer"
+                      }}>✅ Cash Received — Verify</button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button onClick={() => setShowOwnerComplaints(true)} style={{
+              width: "100%", padding: "14px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+              background: "#fff", color: "#dc2626", border: "2px solid #fecaca", borderRadius: 14, fontSize: 15,
+              fontWeight: 700, cursor: "pointer", marginBottom: 10
+            }}>
+              📢 My PG Complaints
+              {complaints.filter(c => c.ownerId === CURRENT_OWNER_ID && c.status === "open").length > 0 && (
+                <span style={{ background: "#dc2626", color: "#fff", borderRadius: 20, padding: "2px 9px", fontSize: 12 }}>
+                  {complaints.filter(c => c.ownerId === CURRENT_OWNER_ID && c.status === "open").length}
+                </span>
+              )}
+            </button>
+
+            <div style={{ background: "#fffbeb", borderRadius: 12, padding: 14, border: "1px solid #fde68a" }}>
+              <div style={{ fontWeight: 700, color: "#92400e", marginBottom: 4 }}>📢 Subscription Active</div>
+              <div style={{ fontSize: 13, color: "#78350f" }}>Pro Plan · Expires Dec 2025 · 2/5 listings used</div>
+            </div>
+          </>
+        )}
+
+        {tab === "profile" && (
+          <>
+            <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 16 }}>Profile</div>
+            <div style={{ background: "#fff", borderRadius: 14, padding: 20, textAlign: "center", marginBottom: 16 }}>
+              <div style={{
+                width: 64, height: 64, borderRadius: "50%", margin: "0 auto 12px",
+                background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 28, color: "#fff", fontWeight: 800
+              }}>{user?.name?.[0]?.toUpperCase() || "U"}</div>
+              <div style={{ fontWeight: 800, fontSize: 16 }}>{user?.name}</div>
+              <div style={{ color: "#6b7280", fontSize: 13 }}>📞 +91 {user?.phone}</div>
+              <div style={{
+                display: "inline-block", marginTop: 6, background: user?.role === "owner" ? "#fef3c7" : "#eff6ff",
+                color: user?.role === "owner" ? "#92400e" : "#1d4ed8",
+                borderRadius: 20, padding: "3px 12px", fontSize: 12, fontWeight: 700
+              }}>{user?.role === "owner" ? "🏠 Owner" : "🏃 Tenant"}</div>
+            </div>
+
+            {/* Owner UPI card */}
+            {user?.role === "owner" && (
+              <div style={{ background: "#fff", borderRadius: 14, padding: 16, marginBottom: 16, border: "1.5px solid #bbf7d0" }}>
+                <div style={{ fontWeight: 700, fontSize: 14, color: "#166534", marginBottom: 10 }}>💳 Payment Details</div>
+                {user?.upiId ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 24 }}>📱</span>
+                    <div>
+                      <div style={{ fontSize: 11, color: "#6b7280" }}>UPI ID</div>
+                      <div style={{ fontWeight: 700, fontSize: 14 }}>{user.upiId}</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 13, color: "#9ca3af" }}>UPI ID add చేయలేదు — logout చేసి signup లో add చేయండి</div>
+                )}
+                {user?.qrPreview && (
+                  <div style={{ marginTop: 10, textAlign: "center" }}>
+                    <img src={user.qrPreview} alt="QR" style={{ width: 100, height: 100, borderRadius: 10, border: "2px solid #16a34a" }} />
+                    <div style={{ fontSize: 11, color: "#16a34a", marginTop: 4 }}>✅ QR Code uploaded</div>
+                  </div>
+                )}
+              </div>
+            )}
+            {[
+              { icon: "📋", label: "My Bookings" },
+              { icon: "❤️", label: "Saved PGs" },
+              { icon: "🔔", label: "Notifications" },
+              { icon: "🏠", label: "List Your PG" },
+              { icon: "💳", label: "Payment History" },
+              { icon: "⚙️", label: "Settings" },
+              { icon: "📋", label: "Terms of Service" },
+              { icon: "🔒", label: "Privacy Policy" },
+              { icon: "❓", label: "Help & Support" },
+              { icon: "🚪", label: "Logout" },
+            ].map(item => (
+              <div key={item.label} style={{
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+                background: "#fff", borderRadius: 12, padding: "14px 16px",
+                marginBottom: 8, cursor: "pointer"
+              }} onClick={() => {
+                if (item.label === "List Your PG") setShowSubscription(true);
+                if (item.label === "Help & Support") setShowSupport(true);
+                if (item.label === "Notifications") {
+                  if (window.requestPushPermission) {
+                    window.requestPushPermission().then(granted => {
+                      if (granted) alert("✅ Notifications enable అయ్యాయి!");
+                      else alert("Notifications allow చేయండి — browser settings లో.");
+                    });
+                  }
+                }
+                if (item.label === "Terms of Service") setShowTerms("terms");
+                if (item.label === "Privacy Policy") setShowTerms("privacy");
+                if (item.label === "Logout") { setUser(null); setCitySelected(false); setTab("search"); setActiveCategory(null); }
+              }}>
+                <div style={{ fontSize: 14, fontWeight: 500 }}>{item.icon} {item.label}</div>
+                <div style={{ color: "#9ca3af" }}>›</div>
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+
+      {/* Floating Support Button */}
+      <button onClick={() => setShowSupport(true)} style={{
+        position: "fixed", bottom: 78, right: "calc(50% - 195px)",
+        width: 50, height: 50, borderRadius: "50%",
+        background: "linear-gradient(135deg, #25D366, #16a34a)",
+        border: "none", color: "#fff", fontSize: 22, cursor: "pointer",
+        boxShadow: "0 4px 14px rgba(0,0,0,0.25)", zIndex: 50
+      }}>🎧</button>
+
+      {/* Bottom Nav */}
+      <div style={{
+        position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)",
+        width: "100%", maxWidth: 430, background: "#fff",
+        borderTop: "1px solid #f3f4f6",
+        display: "flex", justifyContent: "space-around", padding: "8px 0 12px"
+      }}>
+        {[
+          { id: "search", icon: "🔍", label: "Search" },
+          { id: "bookings", icon: "📋", label: "Bookings" },
+          { id: "wishlist", icon: "❤️", label: "Saved", badge: wishlist.length },
+          { id: "owner", icon: "🏠", label: "Owner", badge: ownerNotifications.filter(n => !n.read).length },
+          { id: "profile", icon: "👤", label: "Profile" },
+        ].map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)} style={{
+            background: "none", border: "none", display: "flex", flexDirection: "column",
+            alignItems: "center", gap: 2, cursor: "pointer",
+            opacity: tab === t.id ? 1 : 0.45, position: "relative"
+          }}>
+            <span style={{ fontSize: 22, position: "relative" }}>
+              {t.icon}
+              {t.badge > 0 && (
+                <span style={{
+                  position: "absolute", top: -4, right: -6,
+                  background: "#ef4444", color: "#fff", borderRadius: "50%",
+                  width: 16, height: 16, fontSize: 9, fontWeight: 800,
+                  display: "flex", alignItems: "center", justifyContent: "center"
+                }}>{t.badge}</span>
+              )}
+            </span>
+            <span style={{
+              fontSize: 10, fontWeight: 700,
+              color: tab === t.id ? "#6366f1" : "#9ca3af"
+            }}>{t.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Modals */}
+      {bookingPG && (
+        <BookingModal pg={bookingPG} onClose={() => setBookingPG(null)}
+          ownerUpi={bookingPG?.ownerUpi || ""}
+          ownerQr={bookingPG?.ownerQr || null}
+          onPay={({ payMethod, cashPaid }) => {
+            const newBooking = {
+              ...bookingPG,
+              payMethod,
+              cashStatus: payMethod === "Cash (Pay to Owner)" ? "pending" : "online_paid",
+              bookedAt: new Date().toISOString(),
+            };
+            setBookings([...bookings, newBooking]);
+            // Owner notification
+            if (payMethod === "Cash (Pay to Owner)") {
+              setOwnerNotifications(prev => [...prev, {
+                id: Date.now(),
+                type: "cash_pending",
+                pgName: bookingPG.name,
+                message: `New booking! Tenant cash pay చేస్తారు — move-in రోజు collect చేయండి.`,
+                time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                read: false,
+              }]);
+            } else {
+              setOwnerNotifications(prev => [...prev, {
+                id: Date.now(),
+                type: "online_paid",
+                pgName: bookingPG.name,
+                message: `New booking confirmed! Online payment received via ${payMethod}.`,
+                time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                read: false,
+              }]);
+            }
+            setBookingPG(null);
+          }} />
+      )}
+      {showSubscription && <OwnerSubscriptionModal onClose={() => setShowSubscription(false)} onSelectPlan={(plan) => { setOwnerPlan({ name: plan, limit: PLAN_LIMITS[plan] }); setShowSubscription(false); }} />}
+      {showSupport && <CustomerSupportModal onClose={() => setShowSupport(false)} />}
+      {showTerms && <TermsPrivacyModal type={showTerms} onClose={() => setShowTerms(null)} />}
+      {chatPG && <ChatModal pg={chatPG} user={user} onClose={() => setChatPG(null)} />}
+      {showAgreement && <RentAgreementModal booking={showAgreement} user={user} onClose={() => setShowAgreement(null)} />}
+      {showListingForm && (
+        <OwnerListingForm
+          onClose={() => setShowListingForm(false)}
+          onSave={(listing) => {
+            setOwnerListings(prev => [...prev, listing]);
+            setShowListingForm(false);
+          }}
+          user={user}
+        />
+      )}
+      {showMediaUpload && (
+        <OwnerMediaUploadModal
+          onClose={() => setShowMediaUpload(false)}
+          onSave={() => {}}
+        />
+      )}
+      {vacationBooking && (
+        <VacationNoticeModal
+          booking={vacationBooking}
+          onClose={() => setVacationBooking(null)}
+          onSubmit={(b) => {
+            setVacatedBookings([...vacatedBookings, b.id]);
+            setVacationBooking(null);
+          }}
+        />
+      )}
+      {complaintBooking && (
+        <ComplaintModal
+          booking={complaintBooking}
+          onClose={() => setComplaintBooking(null)}
+          onSubmit={(c) => setComplaints([...complaints, c])}
+        />
+      )}
+      {showOwnerComplaints && (
+        <OwnerComplaintsView
+          complaints={complaints}
+          currentOwnerId={CURRENT_OWNER_ID}
+          onResolve={(id) => setComplaints(prev => prev.map(c => c.id === id ? { ...c, status: "resolved" } : c))}
+          onClose={() => setShowOwnerComplaints(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+const container = document.getElementById('root');
+const reactRoot = ReactDOM.createRoot(container);
+reactRoot.render(React.createElement(PGFinderApp));
