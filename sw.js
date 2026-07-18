@@ -3,12 +3,12 @@
 // change, and that's what triggers the in-app update banner for people who
 // already have Kailnest open. If this file is untouched, existing users
 // won't be notified about the new app.jsx/index.html even after they're live.
-const CACHE_NAME = 'kailnest-v2';
+const CACHE_NAME = 'kailnest-v3';
 const URLS_TO_CACHE = [
-  '/Kailnest/',
-  '/Kailnest/index.html',
-  '/Kailnest/app.jsx',
-  '/Kailnest/manifest.json'
+  '/',
+  '/index.html',
+  '/app.jsx',
+  '/manifest.json'
 ];
 
 // Install
@@ -44,7 +44,7 @@ self.addEventListener('push', event => {
     icon: 'https://raw.githubusercontent.com/chittiraju797-cmd/Kailnest/main/1782926117778.png',
     badge: 'https://raw.githubusercontent.com/chittiraju797-cmd/Kailnest/main/1782926117778.png',
     vibrate: [100, 50, 100],
-    data: { url: data.url || '/Kailnest/' },
+    data: { url: data.url || '/' },
     actions: [
       { action: 'open', title: 'చూడు' },
       { action: 'close', title: 'Close' }
