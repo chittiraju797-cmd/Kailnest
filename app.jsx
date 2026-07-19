@@ -763,8 +763,28 @@ securityAnswerHash: await hashPassword(securityA.trim().toLowerCase()),
                       position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
                       background: "none", border: "none", cursor: "pointer", fontSize: 16, color: "#9ca3af"
                     }}>{showPassword ? "🙈" : "👁"}</button>
-                  </div>
-                </div>
+                  </div>{mode === "signup" && (
+  <div style={{ marginBottom: 16 }}>
+    <label style={{ fontSize: 13, fontWeight: 700, color: "#374151", display: "block", marginBottom: 6 }}>
+      🔐 Security Question (password మర్చిపోతే వాడతాం)
+    </label>
+    <select value={securityQ} onChange={e => setSecurityQ(e.target.value)} style={{
+      width: "100%", padding: "11px 12px", borderRadius: 10, border: "1.5px solid #e5e7eb",
+      fontSize: 13, boxSizing: "border-box", marginBottom: 8, background: "#fff"
+    }}>
+      {SECURITY_QUESTIONS.map(q => <option key={q} value={q}>{q}</option>)}
+    </select>
+    <input value={securityA} onChange={e => setSecurityA(e.target.value)}
+      placeholder="మీ జవాబు enter చేయండి"
+      style={{ width: "100%", padding: "11px 12px", borderRadius: 10, border: "1.5px solid #e5e7eb", fontSize: 14, boxSizing: "border-box" }} />
+  </div>
+)}
+                </div>{mode === "login" && (
+  <div onClick={() => setShowForgot(true)} style={{
+    textAlign: "right", fontSize: 12, color: "#6366f1", fontWeight: 700,
+    cursor: "pointer", marginTop: -8, marginBottom: 14
+  }}>Password మర్చిపోయారా?</div>
+)}
 
                 {mode === "signup" && (
                   <div style={{ marginBottom: 16 }}>
