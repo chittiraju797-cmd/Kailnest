@@ -316,7 +316,187 @@ const FB = {
 };
 
 const LOGO_URL = "https://raw.githubusercontent.com/chittiraju797-cmd/Kailnest/main/1782926117778.png";
+const SECURITY_QUESTIONS = [
+  "మీ స్వగ్రామం పేరు?",
+  "మీ మొదటి పెంపుడు జంతువు పేరు?",
+  "మీ అమ్మ ఊరు పేరు?",
+  "మీకు ఇష్టమైన టీచర్ పేరు?",
+  "మీ మొదటి స్కూల్ పేరు?",
+];
 
+function ForgotPasswordScreen({ onDone, onBack }) {
+  const [step, setStep] = useState(1);
+  const [phone, setPhone] = useState("");
+  const [userDoc, setUserDoc] = useState(null);
+  const [securityAnswer, setSecurityAnswer] = useState("");
+  const [otp, setOtp] = useState("");
+  const [confirmationResult, setConfirmationResult] = useState(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleFindUser = async () => {
+    if (phone.length !== 10) return;
+    setLoading(true); setError("");
+    try {
+      const uid = "phone_" + phone;
+      const doc = await window.db.collection("users").doc(uid).get();
+      if (!doc.exists) {
+        setError("ఈ నంబర్‌తో account లేదు.");
+        setLoading(false);
+        return;
+      }
+      const data = doc.data();
+      if (!data.securityQuestion || !data.securityAnswerHash) {
+        setError("ఈ account కి security question set చేయలేదు. Support ని సంప్రదించండి: kailnest5@gmail.com");
+        setLoading(false);
+        return;
+      }
+      setUserDoc({ uid, ...data });
+      setStep(2);
+    } catch (e) {
+      setError("Connection సమస్య. మళ్ళీ try చేయండి.");
+    }
+    setLoading(false);
+  };
+
+  const handleVerifyAnswer = async () => {
+    setLoading(true); setError("");
+    try {
+      const enteredHash = await hashPasswordGlobal(securityAnswer.trim().toLowerCase());
+      if (enteredHash !== userDoc.securityAnswerHash) {
+        setError("జవాబు సరిపోలేదు. మళ్ళీ ప్రయత్నించండి.");
+        setLoading(false);
+        return;
+      }
+      if (!window.recaptchaVerifier) {
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptcha-container", { size: "invisible" });
+      }
+      const result = await window.auth.signInWithPhoneNumber("+91" + phone, window.recaptchaVerifier);
+      setConfirmationResult(result);
+      setStep(3);
+    } catch (e) {
+      console.log("OTP send error:", e);
+      setError("OTP పంపడంలో సమస్య వచ్చింది. మళ్ళీ ప్రయత్నించండి.");
+    }
+    setLoading(false);
+  };
+
+  const handleVerifyOtp = async () => {
+    if (otp.length !== 6) return;
+    setLoading(true); setError("");
+    try {
+      await confirmationResult.confirm(otp);
+      setStep(4);
+    } catch (e) {
+      setError("OTP తప్పు. మళ్ళీ enter చేయండి.");
+    }
+    setLoading(false);
+  };
+
+  const handleSetNewPassword = async () => {
+    if (newPassword.length < 4) { setError("Password కనీసం 4 characters ఉండాలి."); return; }
+    if (newPassword !== confirmNewPassword) { setError("Passwords సరిపోలేదు."); return; }
+    setLoading(true); setError("");
+    try {
+      const newHash = await hashPasswordGlobal(newPassword);
+      await window.db.collection("users").doc(userDoc.uid).update({ passwordHash: newHash });
+      if (window.auth.currentUser) await window.auth.signOut();
+      setStep(5);
+      setTimeout(onDone, 1800);
+    } catch (e) {
+      setError("Password update కాలేదు. మళ్ళీ ప్రయత్నించండి.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "system-ui, sans-serif" }}>
+      <div id="recaptcha-container"></div>
+      <div style={{ background: "#fff", borderRadius: 20, padding: 24, width: "100%", maxWidth: 380, boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
+
+        <div onClick={onBack} style={{ fontSize: 13, color: "#6366f1", fontWeight: 700, cursor: "pointer", marginBottom: 16 }}>← Login కి వెళ్ళు</div>
+
+        {step === 1 && (
+          <>
+            <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 4 }}>🔑 Password Reset</div>
+            <div style={{ fontSize: 13, color: "#6b7280", marginBottom: 18 }}>మీ ఫోన్ నంబర్ enter చేయండి</div>
+            <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+              <div style={{ background: "#f3f4f6", borderRadius: 10, padding: "11px 12px", fontSize: 14, fontWeight: 600 }}>🇮🇳 +91</div>
+              <input value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                placeholder="10-digit number" type="tel"
+                style={{ flex: 1, padding: "11px 12px", borderRadius: 10, border: "1.5px solid #e5e7eb", fontSize: 14, boxSizing: "border-box" }} />
+            </div>
+            <button onClick={handleFindUser} disabled={phone.length !== 10 || loading} style={{
+              width: "100%", padding: "13px", background: phone.length === 10 ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "#d1d5db",
+              color: "#fff", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer"
+            }}>{loading ? "వెతుకుతున్నాం..." : "Continue →"}</button>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 4 }}>🔐 Security Question</div>
+            <div style={{ fontSize: 13, color: "#374151", marginBottom: 14, fontWeight: 600 }}>{userDoc.securityQuestion}</div>
+            <input value={securityAnswer} onChange={e => setSecurityAnswer(e.target.value)}
+              placeholder="మీ జవాబు"
+              style={{ width: "100%", padding: "11px 12px", borderRadius: 10, border: "1.5px solid #e5e7eb", fontSize: 14, boxSizing: "border-box", marginBottom: 14 }} />
+            <button onClick={handleVerifyAnswer} disabled={!securityAnswer.trim() || loading} style={{
+              width: "100%", padding: "13px", background: securityAnswer.trim() ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "#d1d5db",
+              color: "#fff", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer"
+            }}>{loading ? "Verify చేస్తున్నాం..." : "Verify & Send OTP →"}</button>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 4 }}>📱 Enter OTP</div>
+            <div style={{ fontSize: 13, color: "#6b7280", marginBottom: 14 }}>+91 {phone} కి 6-digit OTP పంపాం</div>
+            <input value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              placeholder="6-digit OTP" type="tel"
+              style={{ width: "100%", padding: "11px 12px", borderRadius: 10, border: "1.5px solid #e5e7eb", fontSize: 18, letterSpacing: 4, textAlign: "center", boxSizing: "border-box", marginBottom: 14 }} />
+            <button onClick={handleVerifyOtp} disabled={otp.length !== 6 || loading} style={{
+              width: "100%", padding: "13px", background: otp.length === 6 ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "#d1d5db",
+              color: "#fff", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer"
+            }}>{loading ? "Verify చేస్తున్నాం..." : "Verify OTP ✓"}</button>
+          </>
+        )}
+
+        {step === 4 && (
+          <>
+            <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 4 }}>🔒 New Password</div>
+            <div style={{ fontSize: 13, color: "#6b7280", marginBottom: 14 }}>కొత్త password సెట్ చేయండి</div>
+            <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
+              placeholder="కొత్త password (min 4 characters)"
+              style={{ width: "100%", padding: "11px 12px", borderRadius: 10, border: "1.5px solid #e5e7eb", fontSize: 14, boxSizing: "border-box", marginBottom: 10 }} />
+            <input type="password" value={confirmNewPassword} onChange={e => setConfirmNewPassword(e.target.value)}
+              placeholder="Password మళ్ళీ enter చేయండి"
+              style={{ width: "100%", padding: "11px 12px", borderRadius: 10, border: "1.5px solid #e5e7eb", fontSize: 14, boxSizing: "border-box", marginBottom: 14 }} />
+            <button onClick={handleSetNewPassword} disabled={loading} style={{
+              width: "100%", padding: "13px", background: "linear-gradient(135deg, #16a34a, #15803d)",
+              color: "#fff", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer"
+            }}>{loading ? "Update చేస్తున్నాం..." : "Password Reset చేయి ✓"}</button>
+          </>
+        )}
+
+        {step === 5 && (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ fontSize: 56 }}>✅</div>
+            <div style={{ fontWeight: 800, fontSize: 18, color: "#16a34a", marginTop: 8 }}>Password Reset అయ్యింది!</div>
+            <div style={{ color: "#6b7280", fontSize: 13, marginTop: 6 }}>ఇప్పుడు కొత్త password తో login చేయండి</div>
+          </div>
+        )}
+
+        {error && (
+          <div style={{ marginTop: 12, background: "#fef2f2", borderRadius: 8, padding: "8px 12px", fontSize: 12, color: "#dc2626", textAlign: "center", border: "1px solid #fecaca" }}>
+            ⚠️ {error}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 // ─── Login / Signup Screen ─────────────────────────────────────────────────────
 function LoginScreen({ onLogin, lang, setLang }) {
   const [mode, setMode] = useState("login");
