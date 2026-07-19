@@ -628,8 +628,9 @@ function LoginScreen({ onLogin, lang, setLang }) {
   const handleAuth = async () => {
     if (phone.length !== 10) return;
     if (password.length < 4) { setAuthError("Password must be at least 4 characters."); return; }
-    if (mode === "signup" && password !== confirmPassword) { setAuthError("Passwords do not match."); return; }
+    if (mode === "signup" && password !== confirmPassword) { setAuthError("Passwords do not match."); return; }if (mode === "signup" && securityA.trim().length < 2) { setAuthError("Security question జవాబు enter చేయండి."); return; }if (mode === "signup" && securityA.trim().length < 2) { setAuthError("Security question జవాబు enter చేయండి."); return; }
 
+    
     setLoading(true);
     setAuthError("");
     try {
@@ -648,6 +649,8 @@ function LoginScreen({ onLogin, lang, setLang }) {
         const userProfile = {
           uid, name: name || "User", phone, role,
           status: "active", provider: "phone", passwordHash,
+          securityQuestion: securityQ,
+securityAnswerHash: await hashPassword(securityA.trim().toLowerCase()),
           upiId: upiId || "", lastLoginAt: new Date().toISOString(), createdAt: new Date().toISOString(),
         };
         await userRef.set(userProfile);
