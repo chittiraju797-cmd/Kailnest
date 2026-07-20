@@ -782,11 +782,12 @@ securityAnswerHash: await hashPassword(securityA.trim().toLowerCase()),
   </div>
 )}
                 </div>{mode === "login" && (
-  <div onClick={() => setShowForgot(true)} style={{
-    textAlign: "right", fontSize: 12, color: "#6366f1", fontWeight: 700,
-    cursor: "pointer", marginTop: -8, marginBottom: 14
-  }}>Forgot Password?</div>
-)}
+   <button type="button" onClick={() => setShowForgot(true)} style={{
+  display: "block", marginLeft: "auto", textAlign: "right", fontSize: 12,
+  color: "#6366f1", fontWeight: 700, cursor: "pointer", marginTop: -8, marginBottom: 14,
+  background: "none", border: "none", padding: 0, WebkitTapHighlightColor: "transparent",
+  userSelect: "none", WebkitUserSelect: "none"
+}}>Forgot Password?</button>)}
 
                 {mode === "signup" && (
                   <div style={{ marginBottom: 16 }}>
