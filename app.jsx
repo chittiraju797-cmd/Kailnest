@@ -4629,18 +4629,22 @@ function PaymentVerificationPanel() {
   useEffect(() => { loadClaims(); }, []);
 
   const approveClaim = async (claim) => {
-    setBusyId(claim.id);
-    try {
-      if (!window.db) return;
-      await window.db.collection("paymentClaims").doc(claim.id).update({ status: "approved" });
-      if (claim.uid) {
-        await window.db.collection("users").doc(claim.uid).update({ ownerPlanActive: true, ownerPlanName: "Basic" });
-      }
-      setClaims(prev => prev.map(c => c.id === claim.id ? { ...c, status: "approved" } : c));
-      notifyOwner(`Payment claim approved for ${claim.name} (₹${claim.amount}). Their listing plan is now active.`);
-    } catch (e) { console.log("Approve claim error:", e); alert("Approve failed. Try again."); }
-    setBusyId(null);
-  };
+  setBusyId(claim.id);
+  try {
+    if (!window.db) return;
+    await window.db.collection("paymentClaims").doc(claim.id).update({ status: "approved" });
+    if (claim.uid) {
+      await window.db.collection("users").doc(claim.uid).update({ ownerPlanActive: true, ownerPlanName: "Basic" });
+    }
+    if (claim.phone) {
+      const ownerText = encodeURIComponent(`✅ Kailnest: Your ₹199 payment has been verified! Your listing plan is now active. You can now go ahead and add your property listing. Thank you!`);
+      window.open(`https://wa.me/91${claim.phone}?text=${ownerText}`, "_blank");
+    }
+    setClaims(prev => prev.map(c => c.id === claim.id ? { ...c, status: "approved" } : c));
+    notifyOwner(`Payment claim approved for ${claim.name} (₹${claim.amount}). Their listing plan is now active.`);
+  } catch (e) { console.log("Approve claim error:", e); alert("Approve failed. Try again."); }
+  setBusyId(null);
+};
 
   const rejectClaim = async (claim) => {
     const reason = window.prompt("Reason for rejecting this payment claim (e.g. no matching credit found):", "");
