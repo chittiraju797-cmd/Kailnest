@@ -3551,6 +3551,7 @@ const ALL_LISTINGS = {
   Hotel: [...HOTELS, ...EXTRA_HOTELS],
   Apartment: [...APARTMENTS, ...EXTRA_APARTMENTS],
   House: [...HOUSES, ...EXTRA_HOUSES],
+  Sale: [],
 };
 
 const CATEGORIES = [
@@ -3558,6 +3559,7 @@ const CATEGORIES = [
   { key: "Hotel", label: "Hotels", icon: "🏨", color: "#0891b2", bg: "#ecfeff", desc: "Daily / short stay hotels" },
   { key: "Apartment", label: "Apartments", icon: "🏢", color: "#059669", bg: "#f0fdf4", desc: "Furnished & unfurnished flats" },
   { key: "House", label: "Houses", icon: "🏠", color: "#d97706", bg: "#fffbeb", desc: "Independent houses for rent" },
+  { key: "Sale", label: "For Sale", icon: "🏷️", color: "#be123c", bg: "#fff1f2", desc: "Properties for sale" },
 ];
 
 // ─── Admin Dashboard ───────────────────────────────────────────────────────────
