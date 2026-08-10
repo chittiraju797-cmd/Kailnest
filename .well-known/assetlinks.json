@@ -1,1 +1,8 @@
-
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "in.kailnest.twa",
+    "sha256_cert_fingerprints": ["DA:FE:6B:81:80:F3:2E:0B:C4:DB:B4:7E:3D:D1:C3:A3:CD:39:0E:1D:EC:99:D3:85:97:E3:67:48:B2:9D:98:9E"]
+  }
+}]
